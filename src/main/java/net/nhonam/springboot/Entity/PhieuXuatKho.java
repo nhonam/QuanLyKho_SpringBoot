@@ -1,7 +1,4 @@
 package net.nhonam.springboot.Entity;
-
-import java.sql.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,22 +18,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PhieuNhapKho { // person
+public class PhieuXuatKho {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_PhieuNhapKho;
-
-    @Column(name = "ngay_nhap",nullable = false)
-    private Date ngayNhap;
-    @Column(name = "tong_tien")
-    private Double tongTien;
-    // Many to One có nhiều phieesuu nhập kho do 1 NhanVien tạo
-    @ManyToOne
-    @JoinColumn(name = "user_id") // // thông qua khóa ngoại id
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "nhacungcap_id") // // thông qua khóa ngoại id
-    private NhaCungCap nhaCungCap;
-
+    private Long id_PhieuXuat;
+    
 }

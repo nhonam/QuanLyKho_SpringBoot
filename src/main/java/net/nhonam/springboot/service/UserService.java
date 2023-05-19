@@ -3,7 +3,9 @@ package net.nhonam.springboot.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.nhonam.springboot.Utils.Mapper.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.nhonam.springboot.DTO.UserDTO;
@@ -15,12 +17,23 @@ import net.nhonam.springboot.repository.IUserRepository;
 public class UserService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private IUserRepository userRepository;
 
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(user -> UserMapper.getInstance().toDTO(user))
-                .collect(Collectors.toList());
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    public Boolean checkUserExist(String userName){
+        for (User user: getAllUsers()
+             ) {
+            if(userName.equals(user.getUserName()))
+                return true;
+        }
+        return  false;
+        
     }
 
     public User getUserById(Long id) {
@@ -28,6 +41,11 @@ public class UserService {
     }
 
     public User createUser(User user) {
+//        if(user.getRole().equals("ADMIN"))
+//            user.setRole(RoleEnum.ADMIN);
+//        else user.setRole(RoleEnum.EMPLOYEE);
+        String passWord = passwordEncoder.encode(user.getPassword());
+        user.setPassword(passWord);
         return userRepository.save(user);
     }
 

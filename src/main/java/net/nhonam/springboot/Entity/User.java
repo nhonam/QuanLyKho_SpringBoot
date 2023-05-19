@@ -4,15 +4,15 @@ package net.nhonam.springboot.Entity;
 import java.util.Collection;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import net.nhonam.springboot.Utils.ERole;
+import lombok.*;
+import net.nhonam.springboot.Utils.Mapper.RoleEnum;
 
 @Entity // Đánh dấu đây là table trong db
 @Data // lombok giúp generate các hàm constructor, get, set v.v.
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -34,21 +34,22 @@ public class User {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "Sdt")
+    @Column(name = "Sdt", length = 12, unique = true)
     private String phone;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<PhieuNhapKho> PhieuNhapKhos;
 
-    @Column(name = "Role")
-    private ERole Role;
 
-    // @ManyToMany(fetch = FetchType.LAZY)
-	// @JoinTable(	name = "user_roles", 
-	// 			joinColumns = @JoinColumn(name = "user_id"), 
-	// 			inverseJoinColumns = @JoinColumn(name = "role_id"))
-	// private Set<Role> roles = new HashSet<>();
+    @Column(name = "Role",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoleEnum Role;
 
+    @Column(name = "status")
+    private Boolean status;
+
+
+    
   
 }

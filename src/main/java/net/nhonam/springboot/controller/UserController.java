@@ -20,7 +20,7 @@ public class UserController {
     @GetMapping()
     public ApiResponse getAllEmployees(){
         try {
-            List<UserDTO> users = userService.getAllUsers();
+            List<User> users = userService.getAllUsers();
             return new ApiResponse(true, users, "Lấy danh sách nhân viên thành công!");
         } catch (Exception e) {
             return new ApiResponse(false, null, e.getMessage());
@@ -32,7 +32,8 @@ public class UserController {
     // build create employee REST API
     @PostMapping
     public ApiResponse createEmployee(@RequestBody User user) {
-       
+
+
 
         try {
             User users = userService.createUser(user);

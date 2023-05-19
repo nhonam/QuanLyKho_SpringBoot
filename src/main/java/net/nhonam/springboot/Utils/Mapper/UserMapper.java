@@ -28,7 +28,7 @@ public class UserMapper {
     public UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setUserName(user.getUserName());
-    
+
         return dto;
     }
 }
