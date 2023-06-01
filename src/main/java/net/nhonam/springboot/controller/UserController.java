@@ -32,9 +32,6 @@ public class UserController {
     // build create employee REST API
     @PostMapping
     public ApiResponse createEmployee(@RequestBody User user) {
-
-
-
         try {
             User users = userService.createUser(user);
             return new ApiResponse(true, users, "Tạo nhân viên thành công!");
