@@ -21,7 +21,8 @@ public class SecurityConfig {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/v1/register").permitAll()
-                .requestMatchers("/api/v1/user").authenticated()
+//                .requestMatchers("/api/v1/user").authenticated()
+                .requestMatchers("/api/v1/user").permitAll()
                 .and().httpBasic();
         return httpSecurity.build();
     }

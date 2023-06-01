@@ -1,14 +1,9 @@
 package net.nhonam.springboot.Entity;
 
 import java.sql.Date;
+import java.util.Collection;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -32,11 +27,19 @@ public class PhieuNhapKho { // person
     private Double tongTien;
     // Many to One có nhiều phieesuu nhập kho do 1 NhanVien tạo
     @ManyToOne
-    @JoinColumn(name = "user_id") // // thông qua khóa ngoại id
+    @JoinColumn(name = "id_User") // // thông qua khóa ngoại id
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "nhacungcap_id") // // thông qua khóa ngoại id
+    @JoinColumn(name = "id_NhaCungCap") // // thông qua khóa ngoại id
     private NhaCungCap nhaCungCap;
+
+    @ManyToOne
+    @JoinColumn(name = "id_Kho") // // thông qua khóa ngoại id
+    private Kho kho;
+
+    @OneToMany(mappedBy = "phieuNhapKho", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
+    private Collection<PhieuNhapDetail> phieuNhapDetails;
 
 }
