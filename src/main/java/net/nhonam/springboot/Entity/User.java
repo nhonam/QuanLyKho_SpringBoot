@@ -35,11 +35,15 @@ public class User {
     private String email;
 
     @Column(name = "Sdt", length = 12, unique = true)
-    private String phone;
+    private String SDT;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<PhieuNhapKho> PhieuNhapKhos;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
+    private Collection<PhieuXuatKho> PhieuXuatKhos;
 
 
     @Column(name = "Role",nullable = false)

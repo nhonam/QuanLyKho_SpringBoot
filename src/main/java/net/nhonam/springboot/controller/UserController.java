@@ -86,8 +86,8 @@ public class UserController {
                     updateUser.setEmail(userDetail.getEmail());
                 }
 
-                if (userDetail.getPhone() != null) {
-                    updateUser.setPhone(userDetail.getPhone());
+                if (userDetail.getSDT() != null) {
+                    updateUser.setSDT(userDetail.getSDT());
                 }
                 userService.updateUser(id, updateUser);
             return new ApiResponse(true, updateUser, "Cập nhật thông tin thành công");
