@@ -3,12 +3,13 @@ package net.nhonam.springboot.Entity;
 import java.sql.Date;
 import java.util.Collection;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 @Entity // Đánh dấu đây là table trong db
 @Data // lombok giúp generate các hàm constructor, get, set v.v.

@@ -1,9 +1,10 @@
 package net.nhonam.springboot.Entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Kho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull (message = "Can phai nhap ten")
+    @NotNull(message = "Can phai nhap ten")
     @Column(name = "TenKho")
     private String tenKho;
     @NotNull
