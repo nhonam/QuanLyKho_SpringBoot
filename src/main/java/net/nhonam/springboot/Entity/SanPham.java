@@ -1,6 +1,7 @@
 package net.nhonam.springboot.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Date;
@@ -16,7 +17,7 @@ public class SanPham {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @NotNull
     @Column(name = "TenSanPham", unique = true)
     private String tenSanPham;
 
