@@ -2,10 +2,12 @@ package net.nhonam.springboot.Entity;
 
 import java.util.Collection;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 @Entity // Đánh dấu đây là table trong db
 @Data // lombok giúp generate các hàm constructor, get, set v.v.

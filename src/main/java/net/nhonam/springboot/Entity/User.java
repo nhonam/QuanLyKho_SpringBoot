@@ -3,9 +3,9 @@ package net.nhonam.springboot.Entity;
 
 import java.util.Collection;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
-import net.nhonam.springboot.Utils.Mapper.RoleEnum;
+import net.nhonam.springboot.Utils.RoleEnum;
 
 @Entity // Đánh dấu đây là table trong db
 @Data // lombok giúp generate các hàm constructor, get, set v.v.

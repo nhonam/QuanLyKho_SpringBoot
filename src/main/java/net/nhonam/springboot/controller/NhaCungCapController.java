@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
+
 import net.nhonam.springboot.Entity.NhaCungCap;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.NhaCungCapService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/supplier")

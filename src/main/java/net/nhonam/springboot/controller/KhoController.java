@@ -2,7 +2,11 @@ package net.nhonam.springboot.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import net.nhonam.springboot.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import net.nhonam.springboot.Entity.Kho;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.KhoService;
-
-// import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/kho")
@@ -50,18 +51,20 @@ public class KhoController {
         }
     }
     @PostMapping()
-    public ApiResponse createkho(@Valid @RequestBody Kho kho) {
+    public Response createkho(@Valid @RequestBody Kho kho) {
         try {
-            // if(k.findByTenKho(kho.getTenKho())!=null) throw new RuntimeException("ten da duoc tao");
-            if(khoService.getKhoByName(kho.getTenKho()).isEmpty()){
-                Kho khoAdd = khoService.createKho(kho);
-                return new ApiResponse(true, khoAdd, "them kho thành công!");
-            }
-            else{
-                return new ApiResponse(false, null, "Ten Kho da duoc su dung!");
-            }
+            Kho khoAdd = khoService.createKho(kho);
+            return new ApiResponse(true, khoAdd, "them kho thành công!");
+
         }catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+
+            Response singleton = Response.getInstance();
+            singleton.setData(null);
+            singleton.setStatus(HttpStatus.BAD_REQUEST);
+            singleton.setMessage("thêm kho thất bại");
+
+            return singleton;
+//            return new ApiResponse(false, null, e.getMessage());
         }
     }
     @GetMapping("/{id}")

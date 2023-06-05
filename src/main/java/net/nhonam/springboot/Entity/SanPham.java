@@ -1,9 +1,10 @@
 package net.nhonam.springboot.Entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Collection;
 
@@ -21,16 +22,16 @@ public class SanPham {
     @Column(name = "TenSanPham", unique = true)
     private String tenSanPham;
 
-    @Column(name = "NgaySanXuat", unique = true)
+    @Column(name = "NgaySanXuat")
     private Date ngaySanXuat;
 
-    @Column(name = "Soluong", unique = true)
+    @Column(name = "Soluong")
     private int soluong;
 
-    @Column(name = "HanSuDung", unique = true)
+    @Column(name = "HanSuDung")
     private int thang;
 
-    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<ViTriSP> viTriSPs;
 
     @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL)
@@ -41,6 +42,71 @@ public class SanPham {
 
     @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL)
     private Collection<GiaSanPham> giaSanPhams;
+
+    private SanPham(BuilderPT builder) {
+        setId(builder.id);
+        setTenSanPham(builder.tenSanPham);
+        setSoluong(builder.soluong);
+        setNgaySanXuat(builder.ngaySanXuat);
+        setThang(builder.thang);
+    }
+
+    public static BuilderPT newSanPham() {
+        return new BuilderPT();
+    }
+
+    // định nghĩa một inner class bên trong class product
+
+    public static final class BuilderPT {
+        private long id;
+        private String tenSanPham;
+
+        private Date ngaySanXuat;
+
+        private int soluong;
+
+        private int thang;
+
+        private BuilderPT() {
+        }
+
+        public BuilderPT id(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public BuilderPT tenSanPham(String name) {
+            this.tenSanPham = name;
+            return this;
+        }
+
+        public BuilderPT ngaySanXuat(Date ngaySanXuat) {
+            this.ngaySanXuat = ngaySanXuat;
+            return this;
+        }
+
+        public BuilderPT soluong(int soluong) {
+            this.soluong = soluong;
+            return this;
+        }
+        public BuilderPT thang(int thang) {
+            this.thang = thang;
+            return this;
+        }
+        public SanPham build() {
+            return new SanPham(this);
+        }
+
+    }
+
+    // Khi muốn tạo một object ta chỉ cần khai báo như sau
+//    Product product = Product.newProduct()
+//            .id(1l)
+//            .description("TV 46'")
+//            .value(2000.00)
+//            .name("TV 46'")
+//            .build();
+    // nhìn vào có thể thấy code khá dễ hiểu trong việc mô tả các trường trong trường hợp cần nhiều biến cần truyền vào
 
 
 }

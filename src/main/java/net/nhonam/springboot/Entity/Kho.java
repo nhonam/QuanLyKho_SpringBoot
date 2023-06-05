@@ -1,9 +1,11 @@
 package net.nhonam.springboot.Entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class Kho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull (message = "Can phai nhap ten")
+    @NotNull(message = "Can phai nhap ten")
     @Column(name = "TenKho")
     private String tenKho;
     @NotNull
@@ -30,13 +32,14 @@ public class Kho {
     @Column(name = "Sdt", length = 12, unique = true)
     private String SDT;
 
-    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<ChiTietKho> chiTietKhos;
 
-    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<PhieuXuatKho> phieuXuatKhos;
 
-    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Collection<PhieuNhapKho> phieuNhapKhos;
 
 }

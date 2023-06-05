@@ -1,4 +1,4 @@
-package net.nhonam.springboot.Utils.Mapper;
+package net.nhonam.springboot.Utils;
 
 public enum RoleEnum {
     ADMIN, EMPLOYEE

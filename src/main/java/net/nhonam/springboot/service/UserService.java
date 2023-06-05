@@ -1,20 +1,20 @@
 package net.nhonam.springboot.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import net.nhonam.springboot.Utils.Mapper.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import net.nhonam.springboot.DTO.UserDTO;
 import net.nhonam.springboot.Entity.User;
-import net.nhonam.springboot.Utils.Mapper.UserMapper;
 import net.nhonam.springboot.repository.IUserRepository;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -23,7 +23,7 @@ public class UserService {
     private IUserRepository userRepository;
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return (List<User>) userRepository.findAll();
     }
     
     public Boolean checkUserExist(String userName){
@@ -57,4 +57,14 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByuserName(username);
+//        System.out.println(user.getId()+"nam nè ");
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
+                new ArrayList<>());
+    }
 }
