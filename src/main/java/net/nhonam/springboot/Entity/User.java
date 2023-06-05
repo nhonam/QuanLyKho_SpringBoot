@@ -3,7 +3,7 @@ package net.nhonam.springboot.Entity;
 
 import java.util.Collection;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 import net.nhonam.springboot.Utils.Mapper.RoleEnum;
 

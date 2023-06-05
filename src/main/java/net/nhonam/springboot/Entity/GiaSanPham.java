@@ -1,7 +1,8 @@
 package net.nhonam.springboot.Entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity // Đánh dấu đây là table trong db
 @Data // lombok giúp generate các hàm constructor, get, set v.v.

@@ -1,6 +1,6 @@
 package net.nhonam.springboot.Entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.sql.Date;

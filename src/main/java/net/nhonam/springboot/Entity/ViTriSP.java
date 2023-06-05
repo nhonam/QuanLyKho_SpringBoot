@@ -1,7 +1,7 @@
 package net.nhonam.springboot.Entity;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 @Entity // Đánh dấu đây là table trong db

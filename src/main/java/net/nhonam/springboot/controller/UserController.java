@@ -3,7 +3,6 @@ package net.nhonam.springboot.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import net.nhonam.springboot.DTO.UserDTO;
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.UserService;
