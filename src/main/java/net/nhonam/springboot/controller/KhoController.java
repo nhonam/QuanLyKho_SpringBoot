@@ -2,7 +2,9 @@ package net.nhonam.springboot.controller;
 
 import java.util.List;
 
+import net.nhonam.springboot.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,13 +51,28 @@ public class KhoController {
         }
     }
     @PostMapping()
-    public ApiResponse createkho(@Valid @RequestBody Kho kho) {
+    public Response createkho(@Valid @RequestBody Kho kho) {
         try {
             Kho khoAdd = khoService.createKho(kho);
-            return new ApiResponse(true, khoAdd, "them kho thành công!");
+
+            Response singleton = Response.getInstance();
+            singleton.setData(khoAdd);
+            singleton.setStatus(HttpStatus.OK);
+            singleton.setMessage("thêm kho thành công");
+
+            return singleton;
+
+//            return new ApiResponse(true, khoAdd, "them kho thành công!");
 
         }catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+
+            Response singleton = Response.getInstance();
+            singleton.setData(null);
+            singleton.setStatus(HttpStatus.BAD_REQUEST);
+            singleton.setMessage("thêm kho thất bại");
+
+            return singleton;
+//            return new ApiResponse(false, null, e.getMessage());
         }
     }
     @GetMapping("/{id}")

@@ -1,5 +1,6 @@
 package net.nhonam.springboot.config;
 
+import net.nhonam.springboot.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    //config singleton
+    Response singleton = Response.getInstance();
+//singleton.setData("Example data");
+//singleton.setStatus("Example status");
+//singleton.setMessage("Example message");
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
