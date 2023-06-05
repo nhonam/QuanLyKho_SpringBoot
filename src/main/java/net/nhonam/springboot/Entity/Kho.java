@@ -1,6 +1,7 @@
 package net.nhonam.springboot.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,13 +32,14 @@ public class Kho {
     @Column(name = "Sdt", length = 12, unique = true)
     private String SDT;
 
-    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<ChiTietKho> chiTietKhos;
 
-    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<PhieuXuatKho> phieuXuatKhos;
 
-    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Collection<PhieuNhapKho> phieuNhapKhos;
 
 }

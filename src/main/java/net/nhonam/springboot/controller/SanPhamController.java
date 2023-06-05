@@ -32,7 +32,18 @@ public class SanPhamController {
     @PostMapping()
     public ApiResponse createSanPham(@Valid @RequestBody SanPham sanPham) {
         try {
-            SanPham sanPhamCreate = sanPhamService.createSanPham(sanPham);
+
+            // Khi muốn tạo một object ta chỉ cần khai báo như sau
+            SanPham product = SanPham.newSanPham()
+                    .id(sanPham.getId())
+                    .ngaySanXuat(sanPham.getNgaySanXuat())
+                    .soluong(sanPham.getSoluong())
+                    .thang(sanPham.getThang())
+                    .tenSanPham(sanPham.getTenSanPham())
+                    .build();
+            // nhìn vào có thể thấy code khá dễ hiểu trong việc mô tả các trường trong trường hợp cần nhiều biến cần truyền vào
+
+            SanPham sanPhamCreate = sanPhamService.createSanPham(product);
             return new ApiResponse(true, sanPhamCreate, "Tạo sản phẩm thành công!");
 
         }catch (Exception e) {

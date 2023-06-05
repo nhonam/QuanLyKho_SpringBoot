@@ -13,11 +13,11 @@ public class ChiTietKho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
+    @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name = "id_kho") // // thông qua khóa ngoại id
     private Kho kho;
 
-    @OneToMany(mappedBy = "chiTietKho", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @OneToMany(mappedBy = "chiTietKho", cascade = CascadeType.ALL,fetch = FetchType.LAZY) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<ViTriSP> viTriSPS;
 

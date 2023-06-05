@@ -16,6 +16,7 @@ public class PhieuNhapDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+        
 
     @ManyToOne
     @JoinColumn(name = "id_PhieuNhapKho") // // thông qua khóa ngoại id
