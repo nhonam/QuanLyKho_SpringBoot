@@ -3,6 +3,8 @@ package net.nhonam.springboot.Entity;
 import java.util.Collection;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity // Đánh dấu đây là table trong db
@@ -16,16 +18,16 @@ public class NhaCungCap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @NotNull
     @Column(name = "ten_nhacungcap")
     private String tenNhaCungCap;
-
+    @NotNull
     @Column(name = "dia_chi")
     private String diaChi;
-
+    @NotNull
     @Column(name = "sdt")
     private String sdt;
-
+    @Email(message = "vui long nhap dung dinh dang email")
     @Column(name = "email")
     private String email;
 

@@ -21,6 +21,10 @@ public class SecurityConfig {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/v1/register").permitAll()
+// <<<<<<< HEAD
+// =======
+// //                .requestMatchers("/api/v1/user").authenticated()
+// >>>>>>> 0332110d43092d82d61b6a6ed4e978da28a4edc1
                 .requestMatchers("/api/v1/user").permitAll()
                 .and().httpBasic();
         return httpSecurity.build();

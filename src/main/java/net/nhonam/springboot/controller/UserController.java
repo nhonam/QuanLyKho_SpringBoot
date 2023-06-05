@@ -32,9 +32,6 @@ public class UserController {
     // build create employee REST API
     @PostMapping
     public ApiResponse createEmployee(@RequestBody User user) {
-
-
-
         try {
             User users = userService.createUser(user);
             return new ApiResponse(true, users, "Tạo nhân viên thành công!");
@@ -86,8 +83,8 @@ public class UserController {
                     updateUser.setEmail(userDetail.getEmail());
                 }
 
-                if (userDetail.getPhone() != null) {
-                    updateUser.setPhone(userDetail.getPhone());
+                if (userDetail.getSDT() != null) {
+                    updateUser.setSDT(userDetail.getSDT());
                 }
                 userService.updateUser(id, updateUser);
             return new ApiResponse(true, updateUser, "Cập nhật thông tin thành công");
