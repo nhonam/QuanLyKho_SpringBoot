@@ -18,6 +18,8 @@ import net.nhonam.springboot.Entity.Kho;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.KhoService;
 
+// import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/kho")
 public class KhoController {
@@ -50,9 +52,14 @@ public class KhoController {
     @PostMapping()
     public ApiResponse createkho(@Valid @RequestBody Kho kho) {
         try {
-            Kho khoAdd = khoService.createKho(kho);
-            return new ApiResponse(true, khoAdd, "them kho thành công!");
-
+            // if(k.findByTenKho(kho.getTenKho())!=null) throw new RuntimeException("ten da duoc tao");
+            if(khoService.getKhoByName(kho.getTenKho()).isEmpty()){
+                Kho khoAdd = khoService.createKho(kho);
+                return new ApiResponse(true, khoAdd, "them kho thành công!");
+            }
+            else{
+                return new ApiResponse(false, null, "Ten Kho da duoc su dung!");
+            }
         }catch (Exception e) {
             return new ApiResponse(false, null, e.getMessage());
         }
