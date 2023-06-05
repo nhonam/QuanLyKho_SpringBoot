@@ -7,8 +7,8 @@ import net.nhonam.springboot.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 
+import javax.validation.Valid;
 import java.awt.image.SampleModel;
 import java.util.List;
 
