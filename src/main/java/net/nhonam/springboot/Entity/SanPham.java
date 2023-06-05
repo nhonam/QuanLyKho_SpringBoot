@@ -1,8 +1,10 @@
 package net.nhonam.springboot.Entity;
 
-import javax.persistence.*;
+
 import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Collection;
 
@@ -16,7 +18,7 @@ public class SanPham {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @NotNull
     @Column(name = "TenSanPham", unique = true)
     private String tenSanPham;
 
