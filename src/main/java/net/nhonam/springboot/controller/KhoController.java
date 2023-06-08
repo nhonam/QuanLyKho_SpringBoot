@@ -55,12 +55,12 @@ public class KhoController {
         try {
             Kho khoAdd = khoService.createKho(kho);
 
-            Response singleton = Response.getInstance();
-            singleton.setData(khoAdd);
-            singleton.setStatus(HttpStatus.OK);
-            singleton.setMessage("thêm kho thành công");
+            Response Res = Response.getInstance();
+            Res.setData(khoAdd);
+            Res.setStatus(HttpStatus.OK);
+            Res.setMessage("thêm kho thành công");
 
-            return singleton;
+            return Res;
 
 //            return new ApiResponse(true, khoAdd, "them kho thành công!");
 

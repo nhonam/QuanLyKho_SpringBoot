@@ -1,6 +1,7 @@
 package net.nhonam.springboot.controller;
 
 import net.nhonam.springboot.Entity.User;
+import net.nhonam.springboot.Utils.RoleEnum;
 import net.nhonam.springboot.config.JwtTokenUtil;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.response.JwtRequest;
@@ -42,9 +43,11 @@ public class AuthController {
         try {
 
             if(userService.checkUserExist(user.getUserName()))
-
-
                 return new ApiResponse(true, "exist", "User đã tồn tại");
+
+            if(user.getRole().equals(RoleEnum.ADMIN))
+                user.setRole(RoleEnum.ADMIN);
+            else user.setRole(RoleEnum.EMPLOYEE);
             User users = userService.createUser(user);
 
             return new ApiResponse(true, users, "Tạo nhân viên thành công!");
@@ -69,6 +72,20 @@ public class AuthController {
         singleton.setData(token);
         singleton.setStatus(HttpStatus.OK);
         singleton.setMessage("đăng nhập thành công");
+
+        return singleton;
+
+    }
+
+    @RequestMapping(value = "/verify", method = RequestMethod.POST)
+    public Response VerifyToken(@RequestBody String token) throws Exception {
+
+//        JSONPObject jsonpObject = new JSONPObject();
+        Response singleton = Response.getInstance();
+        System.out.println(jwtTokenUtil.validateTokenData(token).getUserName());
+        singleton.setData("jwtTokenUtil.validateTokenData(token)");
+        singleton.setStatus(HttpStatus.OK);
+        singleton.setMessage("Verify thafnh coong");
 
         return singleton;
 

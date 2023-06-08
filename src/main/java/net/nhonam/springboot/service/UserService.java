@@ -1,8 +1,8 @@
 package net.nhonam.springboot.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import net.nhonam.springboot.Utils.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -57,14 +57,19 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//    @Override
+    public User loadDataUserByUserName(String username) throws UsernameNotFoundException {
         User user = userRepository.findByuserName(username);
 //        System.out.println(user.getId()+"nam nè ");
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
-                new ArrayList<>());
+        return  user;
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }

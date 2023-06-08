@@ -3,6 +3,9 @@ package net.nhonam.springboot.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import net.nhonam.springboot.Entity.User;
+import net.nhonam.springboot.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,9 @@ public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
+    @Autowired
+    UserService userService;
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -45,6 +51,7 @@ public class JwtTokenUtil implements Serializable {
 
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
+        System.out.println(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody() +"hehe");
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
@@ -75,7 +82,15 @@ public class JwtTokenUtil implements Serializable {
     //validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
+
+
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public User validateTokenData(String token) {
+        final String username = getUsernameFromToken(token);
+        System.out.println(username);
+        return (User) userService.loadUserByUsername(username);
     }
 
 }

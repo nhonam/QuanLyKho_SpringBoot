@@ -25,8 +25,6 @@ public class SanPham {
     @Column(name = "NgaySanXuat")
     private Date ngaySanXuat;
 
-    @Column(name = "Soluong")
-    private int soluong;
 
     @Column(name = "HanSuDung")
     private int thang;
@@ -46,7 +44,6 @@ public class SanPham {
     private SanPham(BuilderPT builder) {
         setId(builder.id);
         setTenSanPham(builder.tenSanPham);
-        setSoluong(builder.soluong);
         setNgaySanXuat(builder.ngaySanXuat);
         setThang(builder.thang);
     }
@@ -63,7 +60,6 @@ public class SanPham {
 
         private Date ngaySanXuat;
 
-        private int soluong;
 
         private int thang;
 
@@ -85,10 +81,6 @@ public class SanPham {
             return this;
         }
 
-        public BuilderPT soluong(int soluong) {
-            this.soluong = soluong;
-            return this;
-        }
         public BuilderPT thang(int thang) {
             this.thang = thang;
             return this;
