@@ -85,13 +85,14 @@ public class KhoController {
         try {
             Kho khoAdd = khoService.createKho(kho);
 
-            Response res = Response.getInstance();
-            res.setData(khoAdd);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("thêm kho ok");
 
-            return res;
-            // return new ApiResponse(true, khoAdd, "them kho thành công!");
+            Response Res = Response.getInstance();
+            Res.setData(khoAdd);
+            Res.setStatus(HttpStatus.OK);
+            Res.setMessage("thêm kho thành công");
+
+            return Res;
+
 
         }catch (Exception e) {
             Response res = Response.getInstance();

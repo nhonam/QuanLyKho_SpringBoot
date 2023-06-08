@@ -51,7 +51,6 @@ public class SanPhamController {
             SanPham product = SanPham.newSanPham()
                     .id(sanPham.getId())
                     .ngaySanXuat(sanPham.getNgaySanXuat())
-                    .soluong(sanPham.getSoluong())
                     .thang(sanPham.getThang())
                     .tenSanPham(sanPham.getTenSanPham())
                     .build();
@@ -124,9 +123,6 @@ public class SanPhamController {
                     updateSanPham.setNgaySanXuat(SanPham.getNgaySanXuat());
                 }
 
-                if (SanPham.getSoluong() != 0) {
-                    updateSanPham.setSoluong(SanPham.getSoluong());
-                }
 
                 if (SanPham.getThang() != 0) {
                     updateSanPham.setThang(SanPham.getThang());
