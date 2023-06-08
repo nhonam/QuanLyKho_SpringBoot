@@ -4,6 +4,9 @@ package net.nhonam.springboot.Entity;
 import java.util.Collection;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 import net.nhonam.springboot.Utils.RoleEnum;
 
@@ -37,12 +40,14 @@ public class User {
     @Column(name = "Sdt", length = 12, unique = true)
     private String SDT;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @JsonIgnore
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<PhieuNhapKho> PhieuNhapKhos;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
+    @JsonIgnore
     private Collection<PhieuXuatKho> PhieuXuatKhos;
 
 

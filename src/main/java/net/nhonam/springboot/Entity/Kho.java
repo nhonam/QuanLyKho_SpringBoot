@@ -37,9 +37,11 @@ public class Kho {
     private Collection<ChiTietKho> chiTietKhos;
 
     @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<PhieuXuatKho> phieuXuatKhos;
 
     @OneToMany(mappedBy = "kho", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<PhieuNhapKho> phieuNhapKhos;
 
 }
