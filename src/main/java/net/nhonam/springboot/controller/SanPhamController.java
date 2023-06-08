@@ -3,8 +3,10 @@ package net.nhonam.springboot.controller;
 import net.nhonam.springboot.Entity.SanPham;
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.response.ApiResponse;
+import net.nhonam.springboot.response.Response;
 import net.nhonam.springboot.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,17 +22,29 @@ public class SanPhamController {
     private SanPhamService sanPhamService;
 
     @GetMapping()
-    public ApiResponse getAllSanPham() {
+    public Response getAllSanPham() {
         try {
             List<SanPham> sanPhamList = sanPhamService.getAllSanPham();
-            return new ApiResponse(true, sanPhamList, "Lấy danh sách sản phẩm thành công!");
+            Response res = Response.getInstance();
+            res.setData(sanPhamList);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("Lấy danh sách sản phẩm thành công!");
+
+            return res;
+            // return new ApiResponse(true, sanPhamList, "Lấy danh sách sản phẩm thành công!");
         }catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
     }
 
     @PostMapping()
-    public ApiResponse createSanPham(@Valid @RequestBody SanPham sanPham) {
+    public Response createSanPham(@Valid @RequestBody SanPham sanPham) {
         try {
 
             // Khi muốn tạo một object ta chỉ cần khai báo như sau
@@ -44,32 +58,62 @@ public class SanPhamController {
             // nhìn vào có thể thấy code khá dễ hiểu trong việc mô tả các trường trong trường hợp cần nhiều biến cần truyền vào
 
             SanPham sanPhamCreate = sanPhamService.createSanPham(product);
-            return new ApiResponse(true, sanPhamCreate, "Tạo sản phẩm thành công!");
+            Response res = Response.getInstance();
+            res.setData(sanPhamCreate);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("Tạo sản phẩm thành công!");
+
+            return res;
+            // return new ApiResponse(true, sanPhamCreate, "Tạo sản phẩm thành công!");
 
         }catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public ApiResponse getSanPhamById(@PathVariable  long id){
+    public Response getSanPhamById(@PathVariable  long id){
 
         try {
             SanPham sanPham = sanPhamService.getSanPhamById(id);
-            return new ApiResponse(true, sanPham, "Tìm kiếm thành công sản phẩm : "+id);
+            Response res = Response.getInstance();
+            res.setData(sanPham);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("Tìm kiếm thành công sản phẩm : "+id);
+
+            return res;
+            // return new ApiResponse(true, sanPham, "Tìm kiếm thành công sản phẩm : "+id);
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
 
     }
 
     @PatchMapping("/{id}")
-    public ApiResponse updateSanPham(@PathVariable long id,@RequestBody SanPham SanPham) {
+    public Response updateSanPham(@PathVariable long id,@RequestBody SanPham SanPham) {
 
         try {
             SanPham updateSanPham = sanPhamService.getSanPhamById(id);
             if(updateSanPham==null) {
-                return new ApiResponse(false, null, "Sản phẩm không tồn tại");
+                Response res = Response.getInstance();
+                res.setData(null);
+                res.setStatus(HttpStatus.BAD_REQUEST);
+                res.setMessage("Sản phẩm không tồn tại");
+
+                return res;
+                // return new ApiResponse(false, null, "Sản phẩm không tồn tại");
             }else {
                 if (SanPham.getTenSanPham() != null) {
                     updateSanPham.setTenSanPham(SanPham.getTenSanPham());
@@ -90,12 +134,24 @@ public class SanPhamController {
 
 
                 sanPhamService.updateSanPham(id, updateSanPham);
-                return new ApiResponse(true, updateSanPham, "Cập nhật thông tin thành công");
+                Response res = Response.getInstance();
+                res.setData(updateSanPham);
+                res.setStatus(HttpStatus.OK);
+                res.setMessage("Cập nhật thông tin thành công");
+
+                return res;
+                // return new ApiResponse(true, updateSanPham, "Cập nhật thông tin thành công");
 
             }
         } catch (Exception e) {
             // TODO: handle exception
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
 
 
@@ -104,18 +160,28 @@ public class SanPhamController {
 
     // build delete employee REST API
     @DeleteMapping("/{id}")
-    public ApiResponse deleteSanPham(@PathVariable long id){
+    public Response deleteSanPham(@PathVariable long id){
 
         SanPham sanPham = sanPhamService.getSanPhamById(id);
         if(sanPham==null) {
-            return new ApiResponse(false, null, "Sản phẩm không tồn tại");
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage("Sản phẩm không tồn tại");
+
+            return res;
+            // return new ApiResponse(false, null, "Sản phẩm không tồn tại");
         }
 
 
         sanPhamService.deleteSanPham(id);
 
-
-        return new ApiResponse(true, sanPham , "Xóa Sản phẩm thành công");
+        Response res = Response.getInstance();
+        res.setData(sanPham);
+        res.setStatus(HttpStatus.OK);
+        res.setMessage("Xóa Sản phẩm thành công");
+        return res;
+        // return new ApiResponse(true, sanPham , "Xóa Sản phẩm thành công");
 
     }
 

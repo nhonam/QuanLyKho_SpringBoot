@@ -2,6 +2,8 @@ package net.nhonam.springboot.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import net.nhonam.springboot.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +21,6 @@ import net.nhonam.springboot.Entity.Kho;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.KhoService;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/api/v1/kho")
 public class KhoController {
@@ -28,26 +28,56 @@ public class KhoController {
     KhoService khoService;
 
     @GetMapping()
-    public ApiResponse getAllkho() {
+    public Response getAllkho() {
         try {
             List<Kho> khoList = khoService.getAllKho();
-            return new ApiResponse(true, khoList, "Lấy danh sách kho thành công!");
+            Response res = Response.getInstance();
+            res.setData(khoList);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("thêm kho ok");
+
+            return res;
+            // return new ApiResponse(true, khoList, "Lấy danh sách kho thành công!");
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage("lay ds kho thất bại");
+
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
     }
     @GetMapping("/name")
-    public ApiResponse getkhoByName(@RequestParam String tenkho) {
+    public Response getkhoByName(@RequestParam String tenkho) {
         try {
             List<Kho> khoList = khoService.getKhoByName(tenkho);
             if(!khoList.isEmpty()){
-                return new ApiResponse(true, khoList, "Lấy ten kho thành công!");
+                Response res = Response.getInstance();
+                res.setData(khoList);
+                res.setStatus(HttpStatus.OK);
+                res.setMessage("thêm kho ok");
+
+            return res;
+                // return new ApiResponse(true, khoList, "Lấy ten kho thành công!");
             }
             else{
-                return new ApiResponse(false, null, "Lấy ten kho khong thành công!");
+                Response res = Response.getInstance();
+                res.setData(null);
+                res.setStatus(HttpStatus.BAD_REQUEST);
+                res.setMessage("lay ten kho thất bại");
+
+                return res;
+                // return new ApiResponse(false, null, "Lấy ten kho khong thành công!");
             }
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
     }
     @PostMapping()
@@ -55,54 +85,75 @@ public class KhoController {
         try {
             Kho khoAdd = khoService.createKho(kho);
 
-            Response singleton = Response.getInstance();
-            singleton.setData(khoAdd);
-            singleton.setStatus(HttpStatus.OK);
-            singleton.setMessage("thêm kho thành công");
+            Response res = Response.getInstance();
+            res.setData(khoAdd);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("thêm kho ok");
 
-            return singleton;
-
-//            return new ApiResponse(true, khoAdd, "them kho thành công!");
+            return res;
+            // return new ApiResponse(true, khoAdd, "them kho thành công!");
 
         }catch (Exception e) {
-
-            Response singleton = Response.getInstance();
-            singleton.setData(null);
-            singleton.setStatus(HttpStatus.BAD_REQUEST);
-            singleton.setMessage("thêm kho thất bại");
-
-            return singleton;
-//            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+            return res;
         }
     }
     @GetMapping("/{id}")
-    public ApiResponse getKhoById(@PathVariable long id){
+    public Response getKhoById(@PathVariable long id){
 
         try {
             Kho kho = khoService.getKhoById(id);
-            return new ApiResponse(true, kho, "Tìm kiếm kho thanh cong: "+id);
+            Response res = Response.getInstance();
+            res.setData(kho);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("lay kho by id");
+            return res;
+            // return new ApiResponse(true, kho, "Tìm kiếm kho thanh cong: "+id);
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage("Lay kho by id that bai");
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
     }
     @DeleteMapping("/{id}")
-    public ApiResponse deletekho(@PathVariable long id){
+    public Response deletekho(@PathVariable long id){
 
         Kho kho = khoService.getKhoById(id);
         if(kho==null) {
-            return new ApiResponse(false, null, "Kho khong ton tai!");
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage("Kho khong ton tai!");
+            return res;
+            // return new ApiResponse(false, null, "Kho khong ton tai!");
         }
         khoService.deleteKho(id);
-        return new ApiResponse(true, kho , "Xóa kho thanh cong");
+            Response res = Response.getInstance();
+            res.setData(kho);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("Xóa kho thanh cong");
+            return res;
+        // return new ApiResponse(true, kho , "Xóa kho thanh cong");
 
     }
     @PutMapping("/{id}")
-    public ApiResponse updateSanPham(@PathVariable long id,@RequestBody Kho kho) {
+    public Response updateSanPham(@PathVariable long id,@RequestBody Kho kho) {
 
         try {
             Kho updatekho = khoService.getKhoById(id);
             if(updatekho==null) {
-                return new ApiResponse(false, null, "Kho không tồn tại");
+                Response res = Response.getInstance();
+                res.setData(null);
+                res.setStatus(HttpStatus.BAD_REQUEST);
+                res.setMessage("Kho khong ton tai!");
+                return res;
+                // return new ApiResponse(false, null, "Kho không tồn tại");
             }else {
                 if (kho.getTenKho() != null) {
                     updatekho.setTenKho(kho.getTenKho());
@@ -116,15 +167,22 @@ public class KhoController {
                 }
 
                 khoService.updateKho(id, updatekho);
-                return new ApiResponse(true, updatekho, "Cập nhật thông tin thành công");
+                Response res = Response.getInstance();
+                res.setData(updatekho);
+                res.setStatus(HttpStatus.OK);
+                res.setMessage("Cập nhật thông tin thành công");
+                return res;
+                // return new ApiResponse(true, updatekho, "Cập nhật thông tin thành công");
 
             }
         } catch (Exception e) {
             // TODO: handle exception
-            return new ApiResponse(false, null, e.getMessage());
+            Response res = Response.getInstance();
+            res.setData(null);
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.setMessage(e.getMessage());
+            return res;
+            // return new ApiResponse(false, null, e.getMessage());
         }
-
-
-
     }
 }
