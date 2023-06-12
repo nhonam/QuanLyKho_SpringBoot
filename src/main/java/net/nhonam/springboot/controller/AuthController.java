@@ -59,23 +59,40 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Response createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    public ApiResponse login(@RequestBody JwtRequest authenticationRequest) throws Exception {
+        try {
+            authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userService
                 .loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-//        JSONPObject jsonpObject = new JSONPObject();
-        Response singleton = Response.getInstance();
-        singleton.setData(token);
-        singleton.setStatus(HttpStatus.OK);
-        singleton.setMessage("đăng nhập thành công");
+            return new ApiResponse(true, token, "Đăng nhập thành công!");
+        } catch (Exception e) {
+            return new ApiResponse(false, null, e.getMessage());
+        }
 
-        return singleton;
 
     }
+
+//    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    public Response createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+//
+//        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+//        final UserDetails userDetails = userService
+//                .loadUserByUsername(authenticationRequest.getUsername());
+//
+//        final String token = jwtTokenUtil.generateToken(userDetails);
+//
+////        JSONPObject jsonpObject = new JSONPObject();
+//        Response singleton = Response.getInstance();
+//        singleton.setData(token);
+//        singleton.setStatus(HttpStatus.OK);
+//        singleton.setMessage("đăng nhập thành công");
+//
+//        return singleton;
+//
+//    }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public Response VerifyToken(@RequestBody String token) throws Exception {
