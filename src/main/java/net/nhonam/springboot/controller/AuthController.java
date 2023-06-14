@@ -1,5 +1,6 @@
 package net.nhonam.springboot.controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.Utils.RoleEnum;
 import net.nhonam.springboot.config.JwtTokenUtil;
@@ -15,6 +16,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin
@@ -50,13 +53,21 @@ public class AuthController {
             else user.setRole(RoleEnum.EMPLOYEE);
             User users = userService.createUser(user);
 
-            return new ApiResponse(true, users, "Tạo nhân viên thành công!");
+            return new ApiResponse(true, users, "Đăng ký tài khoản thành công!");
         } catch (Exception e) {
             return new ApiResponse(false, null, e.getMessage());
         }
 
 
     }
+
+//    @RequestMapping(value = "/login", method = RequestMethod.GET)
+//    public ApiResponse login() throws Exception {
+//
+//
+//        return new ApiResponse(false, null, "e.getMessage()");
+//
+//    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ApiResponse login(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -66,6 +77,7 @@ public class AuthController {
                 .loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
+//        User user = jwtTokenUtil.validateTokenUser(token);
 
             return new ApiResponse(true, token, "Đăng nhập thành công!");
         } catch (Exception e) {
@@ -94,17 +106,44 @@ public class AuthController {
 //
 //    }
 
-    @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public Response VerifyToken(@RequestBody String token) throws Exception {
+    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    public Response VerifyToken( HttpServletRequest request) throws Exception {
+        Response response = Response.getInstance();
+        final String requestTokenHeader = request.getHeader("Authorization");
+        if (requestTokenHeader== null) {
+            response.setData(false);
+            response.setStatus(HttpStatus.OK);
+            response.setMessage("verify thất bại");
+            return response;
+        }
 
-//        JSONPObject jsonpObject = new JSONPObject();
-        Response singleton = Response.getInstance();
-        System.out.println(jwtTokenUtil.validateTokenData(token).getUserName());
-        singleton.setData("jwtTokenUtil.validateTokenData(token)");
-        singleton.setStatus(HttpStatus.OK);
-        singleton.setMessage("Verify thafnh coong");
+        if ( requestTokenHeader.contains(".")) {
+            String jwtToken = null;
+            String username = null;
+            if (requestTokenHeader.startsWith("Bearer ")) {
+                jwtToken = requestTokenHeader.substring(7);
+                try {
+                    User user = jwtTokenUtil.validateTokenUser(jwtToken);
+                    response.setData(user);
+                    response.setStatus(HttpStatus.OK);
+                    response.setMessage("verify thành công");
+                    return response;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Unable to get JWT Token");
+                } catch (ExpiredJwtException e) {
+                    System.out.println("JWT Token has expired");
+                }
 
-        return singleton;
+
+            }
+
+        };
+
+        response.setData(false);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("verify thất bại");
+        return response;
+
 
     }
 
@@ -134,7 +173,7 @@ public class AuthController {
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new Exception("tên tài khoản hoặc mật khẩu không chính xác", e);
         }
     }
 }
