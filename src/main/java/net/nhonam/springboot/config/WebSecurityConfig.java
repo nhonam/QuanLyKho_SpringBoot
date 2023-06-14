@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.beans.Customizer;
 
 @Configuration
@@ -79,11 +80,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
  @Override
 protected void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity
+
+
+
+
+    httpSecurity.headers().frameOptions().disable().and()
         .csrf().disable()
         .authorizeRequests()
-            .antMatchers( "/login", "/register","/verify").permitAll() // Cho phép truy cập vào URL "/login" mà không cần token
-            .anyRequest().authenticated(); // Yêu cầu token cho các URL khác
+            .antMatchers( "/login", "/register","/verify").permitAll(); // Cho phép truy cập vào URL "/login" mà không cần token
+
+     httpSecurity.csrf().disable().authorizeRequests().anyRequest().authenticated(); // Yêu cầu token cho các URL khác
 
     httpSecurity
         .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
