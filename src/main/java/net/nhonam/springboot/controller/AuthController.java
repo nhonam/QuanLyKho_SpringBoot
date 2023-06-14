@@ -16,6 +16,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -70,7 +71,7 @@ public class AuthController {
 //    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ApiResponse login(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ApiResponse login(@RequestBody JwtRequest authenticationRequest, HttpStatus httpStatus) throws Exception {
         try {
             System.out.println(authenticationRequest.getUsername() +"-------");
             authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -80,9 +81,11 @@ public class AuthController {
         final String token = jwtTokenUtil.generateToken(userDetails);
 //        User user = jwtTokenUtil.validateTokenUser(token);
 
-            return new ApiResponse(true, token, "Đăng nhập thành công!");
+            return new ApiResponse(true, token, "Đăng nhập thành công!", httpStatus.OK);
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            throw new ResponseStatusException(httpStatus.BAD_REQUEST,"đăng nhập thất bại");
+//            System.out.println("aaa");
+//            return new ApiResponse(false, null, e.getMessage(), httpStatus.);
         }
 
 
@@ -108,7 +111,7 @@ public class AuthController {
 //    }
 
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
-    public ApiResponse VerifyToken( HttpServletRequest request) throws Exception {
+    public ApiResponse VerifyToken( HttpServletRequest request, HttpStatus httpStatus) throws Exception {
         Response response = Response.getInstance();
         final String requestTokenHeader = request.getHeader("Authorization");
 //        if (requestTokenHeader== null) {
