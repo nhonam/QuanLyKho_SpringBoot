@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 //@SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
 @SpringBootApplication
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class SpringbootBackendApplication {
 
 	public static void main(String[] args) {
