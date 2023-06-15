@@ -74,7 +74,7 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ApiResponse login(@RequestBody JwtRequest authenticationRequest, HttpStatus httpStatus) throws Exception {
         try {
-            System.out.println(authenticationRequest.getUsername() +"-------");
+//            System.out.println(authenticationRequest.getUsername() +"-------");
             authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userService
                 .loadUserByUsername(authenticationRequest.getUsername());
@@ -112,7 +112,7 @@ public class AuthController {
 //    }
 
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
-    public ApiResponse VerifyToken( HttpServletRequest request, HttpStatus httpStatus) throws Exception {
+    public ApiResponse VerifyToken( HttpServletRequest request) throws Exception {
         Response response = Response.getInstance();
         final String requestTokenHeader = request.getHeader("Authorization");
 //        if (requestTokenHeader== null) {
