@@ -20,8 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController
+@RestController()
 @CrossOrigin
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -81,11 +82,11 @@ public class AuthController {
         final String token = jwtTokenUtil.generateToken(userDetails);
 //        User user = jwtTokenUtil.validateTokenUser(token);
 
-            return new ApiResponse(true, token, "Đăng nhập thành công!", httpStatus.OK);
+            return new ApiResponse(true, token, "Đăng nhập thành công!");
         } catch (Exception e) {
             throw new ResponseStatusException(httpStatus.BAD_REQUEST,"đăng nhập thất bại");
 //            System.out.println("aaa");
-//            return new ApiResponse(false, null, e.getMessage(), httpStatus.);
+//            return new ApiResponse(false, null, e.getMessage());
         }
 
 
@@ -125,7 +126,7 @@ public class AuthController {
                 jwtToken = requestTokenHeader.substring(7);
                 try {
                     User user = jwtTokenUtil.validateTokenUser(jwtToken);
-
+                    System.out.println("hehe");
                     return new ApiResponse(true, user, "verify thành công");
 
                 } catch (IllegalArgumentException e) {

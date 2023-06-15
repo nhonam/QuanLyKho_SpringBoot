@@ -87,7 +87,7 @@ protected void configure(HttpSecurity httpSecurity) throws Exception {
     httpSecurity.headers().frameOptions().disable().and()
         .csrf().disable()
         .authorizeRequests()
-            .antMatchers( "/login", "/register","/verify").permitAll(); // Cho phép truy cập vào URL "/login" mà không cần token
+            .antMatchers( "/auth/*").permitAll(); // Cho phép truy cập vào URL "/login" mà không authorization
 
      httpSecurity.csrf().disable().authorizeRequests().anyRequest().authenticated(); // Yêu cầu token cho các URL khác
 
