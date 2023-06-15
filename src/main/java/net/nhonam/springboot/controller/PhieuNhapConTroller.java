@@ -49,7 +49,7 @@ public class PhieuNhapConTroller {
 
         try {
             PhieuNhapKho PNKho = PNKhoService.getPNKhoById(id);
-            return new ApiResponse(true, PNKho, "Tìm kiếm nha cung cap thanh cong: "+id);
+            return new ApiResponse(true, PNKho, "Tìm kiếm PN thanh cong: "+id);
         } catch (Exception e) {
             return new ApiResponse(false, null, e.getMessage());
         }
@@ -59,10 +59,10 @@ public class PhieuNhapConTroller {
 
         PhieuNhapKho PNKho = PNKhoService.getPNKhoById(id);
         if(PNKho==null) {
-            return new ApiResponse(false, null, "Khong co nha cung cap nay!");
+            return new ApiResponse(false, null, "Khong co PN nay!");
         }
         PNKhoService.deletePNKho(id);
-        return new ApiResponse(true, PNKho , "Xóa nha cung cap thanh cong");
+        return new ApiResponse(true, PNKho , "Xóa PN thanh cong");
 
     }
     
