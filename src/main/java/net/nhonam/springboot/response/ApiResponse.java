@@ -1,9 +1,6 @@
 package net.nhonam.springboot.response;
 
-import org.springframework.http.HttpStatus;
-
 public class ApiResponse {
-    HttpStatus httpStatus;
     private boolean success;
     private Object data;
     private String message;
@@ -12,21 +9,6 @@ public class ApiResponse {
         this.success = success;
         this.data = data;
         this.message = message;
-    }
-
-    public ApiResponse(boolean success, Object data, String message, HttpStatus httpStatus) {
-        this.success = success;
-        this.data = data;
-        this.message = message;
-        this.httpStatus = httpStatus;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
-
-    public void setHttpStatus(HttpStatus httpStatus) {
-        this.httpStatus = httpStatus;
     }
 
     public boolean isSuccess() {
