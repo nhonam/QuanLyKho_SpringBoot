@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.http.HttpServletRequest;
+import java.beans.Customizer;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -56,22 +59,45 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        // We don't need CSRF for this example
-//        httpSecurity.csrf().disable()
-//        httpSecurity.authorizeRequests().antMatchers("/").permitAll();
-                // dont authenticate this particular request
-        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/login", "/register","/verify").permitAll().
-                // all other requests need to be authenticated
-                        anyRequest().authenticated().and().
-                // make sure we use stateless session; session won't be used to
-                // store user's state.
-                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//    @Override
+//    protected void configure(HttpSecurity httpSecurity) throws Exception {
+//        // We don't need CSRF for this example
+////        httpSecurity.csrf().disable()
+////        httpSecurity.authorizeRequests().antMatchers("/").permitAll();
+//                // dont authenticate this particular request
+//        httpSecurity.csrf().disable().authorizeRequests().antMatchers( "/login", "/register","/verify").permitAll().
+//                // all other requests need to be authenticated
+//                        anyRequest().authenticated();
+//                // make sure we use stateless session; session won't be used to
+//                // store user's state.
+//        httpSecurity.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//
+//        // Add a filter to validate the tokens with every request
+//        httpSecurity.cors();
+//        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//    }
+
+ @Override
+protected void configure(HttpSecurity httpSecurity) throws Exception {
+
+
+
+
+    httpSecurity.headers().frameOptions().disable().and()
+        .csrf().disable()
+        .authorizeRequests()
+            .antMatchers( "/auth/*").permitAll(); // Cho phép truy cập vào URL "/login" mà không authorization
+
+     httpSecurity.csrf().disable().authorizeRequests().anyRequest().authenticated(); // Yêu cầu token cho các URL khác
+
+    httpSecurity
+        .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        .and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Add a filter to validate the tokens with every request
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.cors().and().csrf().disable();
     }
 }
