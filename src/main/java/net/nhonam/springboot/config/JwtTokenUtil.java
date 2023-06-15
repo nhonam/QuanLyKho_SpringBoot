@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.nhonam.springboot.Entity.User;
+import net.nhonam.springboot.repository.IUserRepository;
 import net.nhonam.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,10 @@ public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = 7 * 24 * 60 ;
+
+    @Autowired
+    private IUserRepository userRepository;
 
     @Autowired
     UserService userService;
@@ -51,7 +55,7 @@ public class JwtTokenUtil implements Serializable {
 
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        System.out.println(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody() +"hehe");
+//        System.out.println(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("sub") +"hehe");
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
@@ -87,10 +91,24 @@ public class JwtTokenUtil implements Serializable {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    public User validateTokenUser(String token) {
+        final String username = getUsernameFromToken(token);
+        User user = userRepository.findByuserName(username);
+
+        return user;
+    }
+
     public User validateTokenData(String token) {
         final String username = getUsernameFromToken(token);
-        System.out.println(username);
-        return (User) userService.loadUserByUsername(username);
+        System.out.println("----------");
+        User user =(User) userService.loadUserByUsername(username);
+        System.out.println(user.getUserName());
+        System.out.println(user.getRole());
+        System.out.println(user.getId());
+        System.out.println(user.getLastName());
+
+
+        return (User) user;
     }
 
 }
