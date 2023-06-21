@@ -29,7 +29,7 @@ public class KhoService {
     public void deleteKho(Long id) {
         Khorepo.deleteById(id);
     }
-    public List<Kho> getKhoByName(String tenKho) {
+    public Kho getKhoByName(String tenKho) {
         return Khorepo.findByTenKho(tenKho);
     }
 }

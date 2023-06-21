@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface KhoRepository extends JpaRepository<Kho, Long> {
-    List<Kho> findByTenKho(String tenKho);
+    Kho findByTenKho(String tenKho);
 }

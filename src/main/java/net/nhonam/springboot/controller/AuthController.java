@@ -7,9 +7,11 @@ import net.nhonam.springboot.config.JwtTokenUtil;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.response.JwtRequest;
 import net.nhonam.springboot.response.Response;
+import net.nhonam.springboot.response.ResponseSingleton;
 import net.nhonam.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController()
 @CrossOrigin
@@ -34,85 +37,55 @@ public class AuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-//    @RequestMapping(value = "/register", method = RequestMethod.POST)
-//    public SingletonRes saveUser(@RequestBody User user) throws Exception {
-//
-//        SingletonRes singleton = SingletonRes.getInstance();
-//        System.out.println(singleton);
-//        return singleton;
-//    }
-
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ApiResponse registerUser(@RequestBody User user){
+    public  ResponseEntity<Object> registerUser(@Valid @RequestBody User user){
+        ResponseSingleton responseHandler = ResponseSingleton.getInstance();
         try {
-
             if(userService.checkUserExist(user.getUserName()))
-                return new ApiResponse(true, "exist", "User đã tồn tại");
+            return responseHandler.generateResponse("User exist!", HttpStatus.OK, null);
 
             if(user.getRole().equals(RoleEnum.ADMIN))
                 user.setRole(RoleEnum.ADMIN);
             else user.setRole(RoleEnum.EMPLOYEE);
             User users = userService.createUser(user);
+            return responseHandler.generateResponse("Register Successfully !", HttpStatus.OK, users);
 
-            return new ApiResponse(true, users, "Đăng ký tài khoản thành công!");
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            return responseHandler.generateResponse("Register Failure !" + e.getMessage(), HttpStatus.OK, null);
         }
 
 
     }
 
-//    @RequestMapping(value = "/login", method = RequestMethod.GET)
-//    public ApiResponse login() throws Exception {
-//
-//
-//        return new ApiResponse(false, null, "e.getMessage()");
-//
-//    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ApiResponse login(@RequestBody JwtRequest authenticationRequest, HttpStatus httpStatus) throws Exception {
+    public ResponseEntity<Object> login(@RequestBody JwtRequest authenticationRequest, HttpStatus httpStatus) throws Exception {
+
+        ResponseSingleton responseHandler = ResponseSingleton.getInstance();
+
         try {
-            System.out.println(authenticationRequest.getUsername() +"-------");
             authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userService
                 .loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
-//        User user = jwtTokenUtil.validateTokenUser(token);
 
-            return new ApiResponse(true, token, "Đăng nhập thành công!");
+            return responseHandler.generateResponse("login successfully !", HttpStatus.OK, token);
         } catch (Exception e) {
-            throw new ResponseStatusException(httpStatus.BAD_REQUEST,"đăng nhập thất bại");
-//            System.out.println("aaa");
-//            return new ApiResponse(false, null, e.getMessage());
+            return responseHandler.generateResponse("username or password invalid", HttpStatus.BAD_REQUEST, null);
+
+
         }
 
 
     }
 
-//    @RequestMapping(value = "/login", method = RequestMethod.POST)
-//    public Response createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-//
-//        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-//        final UserDetails userDetails = userService
-//                .loadUserByUsername(authenticationRequest.getUsername());
-//
-//        final String token = jwtTokenUtil.generateToken(userDetails);
-//
-////        JSONPObject jsonpObject = new JSONPObject();
-//        Response singleton = Response.getInstance();
-//        singleton.setData(token);
-//        singleton.setStatus(HttpStatus.OK);
-//        singleton.setMessage("đăng nhập thành công");
-//
-//        return singleton;
-//
-//    }
 
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
-    public ApiResponse VerifyToken( HttpServletRequest request, HttpStatus httpStatus) throws Exception {
+    public ResponseEntity<Object> VerifyToken( HttpServletRequest request) throws Exception {
+        ResponseSingleton responseHandler = ResponseSingleton.getInstance();
+
         Response response = Response.getInstance();
         final String requestTokenHeader = request.getHeader("Authorization");
 //        if (requestTokenHeader== null) {
@@ -126,15 +99,16 @@ public class AuthController {
                 jwtToken = requestTokenHeader.substring(7);
                 try {
                     User user = jwtTokenUtil.validateTokenUser(jwtToken);
-                    System.out.println("hehe");
-                    return new ApiResponse(true, user, "verify thành công");
+                    return responseHandler.generateResponse("Verify successfully", HttpStatus.OK, user);
+
 
                 } catch (IllegalArgumentException e) {
                     System.out.println("Unable to get JWT Token");
-                    return new ApiResponse(true, null, "Unable to get JWT Token");
+                    return responseHandler.generateResponse("Unable to get JWT Token", HttpStatus.BAD_REQUEST, null);
+
                 } catch (ExpiredJwtException e) {
                     System.out.println("JWT Token has expired");
-                    return new ApiResponse(true, null, "JWT Token đã hết hạn");
+                    return responseHandler.generateResponse("JWT Token has expired", HttpStatus.BAD_REQUEST, null);
 
                 }
 
@@ -142,7 +116,7 @@ public class AuthController {
             }
 
         };
-        return new ApiResponse(false, null, "verify thất bại token null");
+        return responseHandler.generateResponse("Verify Failure", HttpStatus.BAD_REQUEST, null);
 
 
     }
