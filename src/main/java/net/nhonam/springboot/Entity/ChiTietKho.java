@@ -29,6 +29,8 @@ public class ChiTietKho {
 
     @Column(name = "Day", unique = true, length = 2)
     private String day;
+    @Column(name = "SoLuong")
+    private int soLuong;
 
     public ChiTietKho(long id, Kho kho, Collection<ViTriSP> viTriSPS, String cot, String hang, String day) {
         this.id = id;
