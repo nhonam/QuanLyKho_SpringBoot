@@ -84,7 +84,7 @@ public class AuthController {
 
             return new ApiResponse(true, token, "Đăng nhập thành công!");
         } catch (Exception e) {
-            throw new ResponseStatusException(httpStatus.BAD_REQUEST,"đăng nhập thất bại");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"đăng nhập thất bại");
 //            System.out.println("aaa");
 //            return new ApiResponse(false, null, e.getMessage());
         }

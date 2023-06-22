@@ -67,5 +67,10 @@ public class PhieuNhapDetailController {
         return new ApiResponse(true, PNKhoDetail , "Xóa PN thanh cong");
 
     }
+<<<<<<< HEAD
 
     }
+=======
+    
+    }
+>>>>>>> a752e674e600118baed7bf0aa36a2b50849dff86
