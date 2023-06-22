@@ -24,8 +24,8 @@ public class PhieuNhapKho { // person
 
     @Column(name = "ngay_nhap",nullable = false)
     private Date ngayNhap;
-    @Column(name = "tong_tien")
-    private Double tongTien;
+    // @Column(name = "tong_tien")
+    // private Double tongTien;
     // Many to One có nhiều phieesuu nhập kho do 1 NhanVien tạo
     @ManyToOne
     @JoinColumn(name = "id_User") // // thông qua khóa ngoại id
