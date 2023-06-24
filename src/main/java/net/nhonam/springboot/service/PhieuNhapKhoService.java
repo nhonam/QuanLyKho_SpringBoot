@@ -2,7 +2,10 @@ package net.nhonam.springboot.service;
 
 import java.util.List;
 
+import net.nhonam.springboot.Entity.SanPham;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.nhonam.springboot.Entity.PhieuNhapKho;
@@ -16,7 +19,9 @@ public class PhieuNhapKhoService {
     public List<PhieuNhapKho> getAllPNKho(){
         return  phieunhaprepo.findAll();
     }
-
+    public Page<PhieuNhapKho> allPhieuNhapPaging(Pageable paging){
+        return phieunhaprepo.findAll(paging);
+    }
     public PhieuNhapKho getPNKhoById(Long id) {
         return phieunhaprepo.findById(id).orElse(null);
     }

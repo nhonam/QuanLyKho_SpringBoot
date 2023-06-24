@@ -20,12 +20,12 @@ import javax.persistence.*;
 public class PhieuNhapKho { // person
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_PhieuNhapKho;
+    private Long id;
 
     @Column(name = "ngay_nhap",nullable = false)
     private Date ngayNhap;
-    @Column(name = "tong_tien")
-    private Double tongTien;
+//    @Column(name = "tong_tien")
+//    private Double tongTien;
     // Many to One có nhiều phieesuu nhập kho do 1 NhanVien tạo
     @ManyToOne
     @JoinColumn(name = "id_User") // // thông qua khóa ngoại id
@@ -39,7 +39,8 @@ public class PhieuNhapKho { // person
     @JoinColumn(name = "id_Kho") // // thông qua khóa ngoại id
     private Kho kho;
 
-    @OneToMany(mappedBy = "phieuNhapKho", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @OneToMany(mappedBy = "phieuNhapKho", cascade = CascadeType.ALL,
+            orphanRemoval = true) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<PhieuNhapDetail> phieuNhapDetails;
 

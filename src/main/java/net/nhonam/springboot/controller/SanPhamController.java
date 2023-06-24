@@ -1,45 +1,75 @@
 package net.nhonam.springboot.controller;
 
 import net.nhonam.springboot.Entity.SanPham;
-import net.nhonam.springboot.Entity.User;
-import net.nhonam.springboot.response.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import net.nhonam.springboot.response.Response;
+import net.nhonam.springboot.response.ResponseSingleton;
 import net.nhonam.springboot.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
 import java.awt.image.SampleModel;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/product")
 public class SanPhamController {
-
+    ResponseSingleton responseHandler = ResponseSingleton.getInstance();
     @Autowired
     private SanPhamService sanPhamService;
 
+//    @GetMapping()
+//    public Response getAllSanPham() {
+//        try {
+//            List<SanPham> sanPhamList = sanPhamService.getAllSanPham();
+//            Response res = Response.getInstance();
+//            res.setData(sanPhamList);
+//            res.setStatus(HttpStatus.OK);
+//            res.setMessage("Lấy danh sách sản phẩm thành công!");
+//
+//            return res;
+//            // return new ApiResponse(true, sanPhamList, "Lấy danh sách sản phẩm thành công!");
+//        }catch (Exception e) {
+//            Response res = Response.getInstance();
+//            res.setData(null);
+//            res.setStatus(HttpStatus.BAD_REQUEST);
+//            res.setMessage(e.getMessage());
+//
+//            return res;
+//            // return new ApiResponse(false, null, e.getMessage());
+//        }
+//    }
+
     @GetMapping()
-    public Response getAllSanPham() {
+    public ResponseEntity<Object> getAllSanPham(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         try {
-            List<SanPham> sanPhamList = sanPhamService.getAllSanPham();
-            Response res = Response.getInstance();
-            res.setData(sanPhamList);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Lấy danh sách sản phẩm thành công!");
+            List<SanPham> listProduct;
+            Pageable paging = PageRequest.of(page, size);
 
-            return res;
-            // return new ApiResponse(true, sanPhamList, "Lấy danh sách sản phẩm thành công!");
-        }catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage(e.getMessage());
+            Page<SanPham> pageTuts = sanPhamService.allSanPhamPaging(paging);
+            listProduct = pageTuts.getContent();
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
+            Map<String, Object> response = new HashMap<>();
+            response.put("listProduct", listProduct);
+            response.put("currentPage", pageTuts.getNumber());
+            response.put("totalItems", pageTuts.getTotalElements());
+            response.put("totalPages", pageTuts.getTotalPages());
+
+            return responseHandler.generateResponse("get all product successfully!", HttpStatus.OK, response);
+        } catch (Exception e) {
+            return responseHandler.generateResponse("get all product fail !", HttpStatus.BAD_REQUEST, null);
         }
     }
 
