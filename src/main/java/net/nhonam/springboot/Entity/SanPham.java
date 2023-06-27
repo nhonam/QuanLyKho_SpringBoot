@@ -1,6 +1,7 @@
 package net.nhonam.springboot.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,15 +31,19 @@ public class SanPham {
     private int thang;
 
     @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<ViTriSP> viTriSPs;
 
-    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<PhieuXuatDetail> phieuXuatDetails;
 
-    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<PhieuNhapDetail> phieuNhapDetails;
 
-    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<GiaSanPham> giaSanPhams;
 
     private SanPham(BuilderPT builder) {

@@ -1,31 +1,83 @@
 package net.nhonam.springboot.controller;
 
+import net.nhonam.springboot.Entity.Kho;
+import net.nhonam.springboot.Utils.Ultil;
+import net.nhonam.springboot.response.ResponseSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.UserService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
+    ResponseSingleton responseHandler = ResponseSingleton.getInstance();
 
     @Autowired
     private UserService userService;
 
     @GetMapping()
-    public ApiResponse getAllEmployees(){
+    public ResponseEntity<Object> getAllEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
         try {
-            List<User> users = userService.getAllUsers();
-            return new ApiResponse(true, users, "Lấy danh sách nhân viên thành công!");
+            List<User> users = userService.getAllEmployee();
+
+            return responseHandler.generateResponse("Get All employee Successfully", HttpStatus.OK, Ultil.ListToPage(users, page, size));
         } catch (Exception e) {
-            return new ApiResponse(false, null, e.getMessage());
+            return responseHandler.generateResponse("Get All employee fail", HttpStatus.BAD_REQUEST, null);
+        }
+    }
+
+
+    @PostMapping("/search")
+    public ResponseEntity<Object> searchUser(
+            @RequestParam() int page,
+            @RequestParam() int size,
+            @RequestBody Map<String,Object> body
+    ){
+        try {
+            System.out.println(body.get("email"));
+            System.out.println(body.get("name"));
+            System.out.println(body.get("sdt"));
+            if (body.get("email") == null)
+                body.put("email","");
+            if (body.get("name") == null)
+                body.put("name","");
+            if (body.get("sdt") == null)
+                body.put("sdt","");
+           List<User> listUser = userService.SearchUser(body.get("email").toString(), body.get("name").toString(),body.get("sdt").toString());
+//            System.out.println(listUser.get(0).getUserName());
+            Pageable paging = PageRequest.of(page, size);
+            Page<User> pagelist = Ultil.toPage(listUser, paging);
+
+            listUser = pagelist.getContent();
+            Map<String, Object> response = new HashMap<>();
+            response.put("listUser", listUser);
+            response.put("currentPage", pagelist.getNumber());
+            response.put("totalItems", pagelist.getTotalElements());
+            response.put("totalPages", pagelist.getTotalPages());
+
+            return responseHandler.generateResponse("Get employee Successfully", HttpStatus.OK, response);
+        } catch (Exception e) {
+            return responseHandler.generateResponse("Get employee fail", HttpStatus.BAD_REQUEST, null);
         }
 
-       
     }
 
     // build create employee REST API
@@ -93,8 +145,6 @@ public class UserController {
             // TODO: handle exception
             return new ApiResponse(false, null, e.getMessage());
         }
-       
-      
 
     }
 

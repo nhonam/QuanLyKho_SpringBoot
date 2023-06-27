@@ -7,5 +7,7 @@ import net.nhonam.springboot.Entity.Gia;
 
 @Repository
 public interface GiaRepository extends JpaRepository<Gia, Long>{
+
+
     
 }
