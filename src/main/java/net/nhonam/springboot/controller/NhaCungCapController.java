@@ -1,134 +1,107 @@
 package net.nhonam.springboot.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-
 import net.nhonam.springboot.Entity.NhaCungCap;
-import net.nhonam.springboot.response.ApiResponse;
-import net.nhonam.springboot.response.Response;
+import net.nhonam.springboot.response.ResponseSingleton;
 import net.nhonam.springboot.service.NhaCungCapService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/supplier")
 public class NhaCungCapController {
+    ResponseSingleton responseHandler = ResponseSingleton.getInstance();
 
     @Autowired
     NhaCungCapService NhacungcapService;
 
     @GetMapping()
-    public Response getAllNhaCungCap() {
+    public ResponseEntity<Object> getAllNhaCungCap(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         try {
-            List<NhaCungCap> NhacungcapList = NhacungcapService.getAllNhaCungCap();
-            Response res = Response.getInstance();
-            res.setData(NhacungcapList);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Lấy danh sách nha cung cap thành công!");
+            List<NhaCungCap> NhacungcapList = new ArrayList<>();
 
-            return res;
+            Pageable paging = PageRequest.of(page, size);
+
+            Page<NhaCungCap> pageTuts = NhacungcapService.allNhaCungCapPage(paging);
+            NhacungcapList = pageTuts.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("listsupplier", NhacungcapList);
+            response.put("currentPage", pageTuts.getNumber());
+            response.put("totalItems", pageTuts.getTotalElements());
+            response.put("totalPages", pageTuts.getTotalPages());
+
+            return responseHandler.generateResponse("get all supplier successfully!", HttpStatus.OK, response);
+
             // return new ApiResponse(true, NhacungcapList, "Lấy danh sách nha cung cap thành công!");
         } catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage("Lấy danh sách nha cung cap that bai!");
+            return responseHandler.generateResponse("get all supplier fail !", HttpStatus.BAD_REQUEST, null);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
     }
     @PostMapping()
-    public Response createSanPham(@Valid @RequestBody NhaCungCap nhacungcap) {
+    public ResponseEntity<Object> createSupplier(@Valid @RequestBody NhaCungCap nhacungcap) {
         try {
             NhaCungCap nhacungcapCreate = NhacungcapService.createNhaCC(nhacungcap);
-            Response res = Response.getInstance();
-            res.setData(nhacungcapCreate);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Them nha cung cap thành công!");
+            return responseHandler.generateResponse("create Supplier successfully!", HttpStatus.OK, nhacungcapCreate);
 
-            return res;
-            // return new ApiResponse(true, nhacungcapCreate, "them nha cung cap thành công!");
 
         }catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage(e.getMessage());
+            return responseHandler.generateResponse("create Supplier fail!", HttpStatus.OK, null);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
     }
     @GetMapping("/{id}")
-    public Response getNhaCungCapId(@PathVariable long id){
+    public ResponseEntity<Object> getNhaCungCapId(@PathVariable long id){
 
         try {
             NhaCungCap nhacungcap = NhacungcapService.getNhaCungCapById(id);
-            Response res = Response.getInstance();
-            res.setData(nhacungcap);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Them nha cung cap thành công!");
+            if (nhacungcap==null) {
+                return responseHandler.generateResponse(" supplier not found!", HttpStatus.OK, null);
 
-            return res;
+            }
+            return responseHandler.generateResponse("get supplier by id successfully!", HttpStatus.OK, nhacungcap);
+
             // return new ApiResponse(true, nhacungcap, "Tìm kiếm nha cung cap thanh cong: "+id);
         } catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage(e.getMessage());
+            return responseHandler.generateResponse(" supplier not found!", HttpStatus.BAD_REQUEST, null);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
     }
     @DeleteMapping("/{id}")
-    public Response deleteNhaCC(@PathVariable long id){
+    public ResponseEntity<Object> deleteNhaCCById(@PathVariable long id){
 
         NhaCungCap nhacungcap = NhacungcapService.getNhaCungCapById(id);
         if(nhacungcap==null) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage("Khong co nha cung cap nay!");
+            return responseHandler.generateResponse("Supplier not exist!", HttpStatus.OK, null);
 
-            return res;
-            // return new ApiResponse(false, null, "Khong co nha cung cap nay!");
         }
         NhacungcapService.deleteNhaCC(id);
-            Response res = Response.getInstance();
-            res.setData(nhacungcap);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Xóa nha cung cap thanh cong");
+        return responseHandler.generateResponse("Delete supplier successfully", HttpStatus.BAD_REQUEST, null);
 
-            return res;
-        // return new ApiResponse(true, nhacungcap , "Xóa nha cung cap thanh cong");
 
     }
     @PutMapping("/{id}")
-    public Response updateSanPham(@PathVariable long id,@RequestBody NhaCungCap nhacungcap) {
+    public ResponseEntity<Object> updateSupplier(@PathVariable long id,@RequestBody NhaCungCap nhacungcap) {
 
         try {
             NhaCungCap updateNhaCC = NhacungcapService.getNhaCungCapById(id);
             if(updateNhaCC==null) {
-                Response res = Response.getInstance();
-                res.setData(null);
-                res.setStatus(HttpStatus.BAD_REQUEST);
-                res.setMessage("Nha CC không tồn tại");
+                return responseHandler.generateResponse("Supplier not exist!", HttpStatus.BAD_REQUEST, null);
 
-                return res;
                 // return new ApiResponse(false, null, "Nha CC không tồn tại");
             }else {
                 if (nhacungcap.getTenNhaCungCap() != null) {
@@ -148,24 +121,13 @@ public class NhaCungCapController {
 
 
                 NhacungcapService.updateNhaCC(id, updateNhaCC);
-                Response res = Response.getInstance();
-                res.setData(updateNhaCC);
-                res.setStatus(HttpStatus.OK);
-                res.setMessage("Cập nhật thông tin thành công");
+                return responseHandler.generateResponse("updata Supplier successfully", HttpStatus.OK, null);
 
-                return res;
-                // return new ApiResponse(true, updateNhaCC, "Cập nhật thông tin thành công");
 
             }
         } catch (Exception e) {
-            // TODO: handle exception
-            Response res = Response.getInstance();
-                res.setData(null);
-                res.setStatus(HttpStatus.BAD_REQUEST);
-                res.setMessage(e.getMessage());
+            return responseHandler.generateResponse("Supplier not exist!", HttpStatus.BAD_REQUEST, null);
 
-                return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
 
 

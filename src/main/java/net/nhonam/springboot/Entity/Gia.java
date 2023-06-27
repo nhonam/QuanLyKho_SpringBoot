@@ -18,13 +18,13 @@ public class Gia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "Gia", unique = true)
+    @Column(name = "Gia")
     private int gia;
 
-    @Column(name = "NgayBatDau", unique = true)
+    @Column(name = "NgayBatDau")
     private Date ngayBatDau;
 
-    @Column(name = "NgayKetThuc", unique = true)
+    @Column(name = "NgayKetThuc")
     private Date ngayKetThuc;
 
     @OneToMany(mappedBy = "gia", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)

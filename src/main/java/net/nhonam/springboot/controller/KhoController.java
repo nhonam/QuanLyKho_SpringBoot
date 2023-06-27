@@ -1,11 +1,18 @@
 package net.nhonam.springboot.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
+import net.nhonam.springboot.Entity.SanPham;
 import net.nhonam.springboot.response.Response;
 import net.nhonam.springboot.response.ResponseSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,13 +34,25 @@ import net.nhonam.springboot.service.KhoService;
 public class KhoController {
     @Autowired
     KhoService khoService;
+    ResponseSingleton responseHandler = ResponseSingleton.getInstance();
 
     @GetMapping()
-    public ResponseEntity<Object> getAllWarehouse() {
-        ResponseSingleton responseHandler = ResponseSingleton.getInstance();
+    public ResponseEntity<Object> getAllWarehouse(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            List<Kho> result = khoService.getAllKho();
-            return responseHandler.generateResponse("Get AllWarehouse Successfully", HttpStatus.OK, result);
+            Pageable paging = PageRequest.of(page, size);
+            List<Kho> listWarehouse = new ArrayList<>();
+
+            Page<Kho> pageTuts = khoService.allKhoPaging(paging);
+            listWarehouse = pageTuts.getContent();
+            Map<String, Object> response = new HashMap<>();
+            response.put("listWarehouse", listWarehouse);
+            response.put("currentPage", pageTuts.getNumber());
+            response.put("totalItems", pageTuts.getTotalElements());
+            response.put("totalPages", pageTuts.getTotalPages());
+
+            return responseHandler.generateResponse("Get AllWarehouse Successfully", HttpStatus.OK, response);
         } catch (Exception e) {
             return responseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }

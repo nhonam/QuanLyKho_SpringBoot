@@ -1,13 +1,16 @@
 package net.nhonam.springboot.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
+import com.cloudinary.utils.ObjectUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.Utils.RoleEnum;
 import net.nhonam.springboot.config.JwtTokenUtil;
-import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.response.JwtRequest;
 import net.nhonam.springboot.response.Response;
 import net.nhonam.springboot.response.ResponseSingleton;
+import net.nhonam.springboot.service.CloudinaryService;
 import net.nhonam.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,15 +21,19 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController()
 @CrossOrigin
 @RequestMapping("/auth")
 public class AuthController {
+    ResponseSingleton responseHandler = ResponseSingleton.getInstance();
 
     @Autowired
     private UserService userService;
@@ -36,6 +43,8 @@ public class AuthController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -48,11 +57,12 @@ public class AuthController {
             if(user.getRole().equals(RoleEnum.ADMIN))
                 user.setRole(RoleEnum.ADMIN);
             else user.setRole(RoleEnum.EMPLOYEE);
+            user.setStatus(true);
             User users = userService.createUser(user);
             return responseHandler.generateResponse("Register Successfully !", HttpStatus.OK, users);
 
         } catch (Exception e) {
-            return responseHandler.generateResponse("Register Failure !" + e.getMessage(), HttpStatus.OK, null);
+            return responseHandler.generateResponse("Register Failure !" + e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
 
 
@@ -80,11 +90,25 @@ public class AuthController {
 
 
     }
+    @Autowired
+    private CloudinaryService cloudinaryGifService;
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadGif(@RequestParam("image")
+                                                                   MultipartFile gifFile) throws IOException {
+        // User currentUser =
+// userService.findUserByEmail(authentication.getName()); // Authorization
+        String url = cloudinaryGifService.uploadFile(gifFile);
+//        cloudinaryGifService.saveGifToDB(url, title , currentUser);
+
+
+        // LinkedHashMap<String, Object> jsonResponse = cloudinaryGifService.modifyJsonResponse("create", URL);
+        return new ResponseEntity<>(url,HttpStatus.CREATED);
+    }
 
 
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
     public ResponseEntity<Object> VerifyToken( HttpServletRequest request) throws Exception {
-        ResponseSingleton responseHandler = ResponseSingleton.getInstance();
 
         Response response = Response.getInstance();
         final String requestTokenHeader = request.getHeader("Authorization");

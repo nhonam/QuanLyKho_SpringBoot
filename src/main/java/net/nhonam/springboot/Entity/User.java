@@ -40,7 +40,7 @@ public class User {
     @Column(name = "Sdt", length = 12, unique = true)
     private String SDT;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE,fetch = FetchType.LAZY) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     @JsonIgnore
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<PhieuNhapKho> PhieuNhapKhos;

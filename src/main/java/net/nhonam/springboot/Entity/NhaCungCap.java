@@ -33,7 +33,7 @@ public class NhaCungCap {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "nhaCungCap", cascade = CascadeType.ALL) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
+    @OneToMany(mappedBy = "nhaCungCap", cascade = CascadeType.PERSIST) // Quan hệ 1-n với đối tượng PhieuNhapKho (1 NHANVIEN co nhiều phiếu nhập kho)
     // MapopedBy trỏ tới private User user ở trong PhieuNhapKho.
     private Collection<PhieuNhapKho> PhieuNhapKhos;
     

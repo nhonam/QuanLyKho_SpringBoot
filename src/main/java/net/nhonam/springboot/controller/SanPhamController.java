@@ -1,78 +1,112 @@
 package net.nhonam.springboot.controller;
 
+import net.nhonam.springboot.DTO.SanPhamDTO;
+import net.nhonam.springboot.Entity.Gia;
+import net.nhonam.springboot.Entity.GiaSanPham;
 import net.nhonam.springboot.Entity.SanPham;
-import net.nhonam.springboot.Entity.User;
-import net.nhonam.springboot.response.ApiResponse;
+import net.nhonam.springboot.Utils.Ultil;
 import net.nhonam.springboot.response.Response;
+import net.nhonam.springboot.response.ResponseSingleton;
+import net.nhonam.springboot.service.GiaSanPhamService;
+import net.nhonam.springboot.service.GiaService;
 import net.nhonam.springboot.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
-import java.awt.image.SampleModel;
+import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/product")
 public class SanPhamController {
-
+    ResponseSingleton responseHandler = ResponseSingleton.getInstance();
     @Autowired
     private SanPhamService sanPhamService;
 
+    @Autowired
+    private GiaSanPhamService giaSanPhamService;
+    @Autowired
+    private GiaService giaService;
     @GetMapping()
-    public Response getAllSanPham() {
+    public ResponseEntity<Object> getAllSanPham(  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
         try {
-            List<SanPham> sanPhamList = sanPhamService.getAllSanPham();
-            Response res = Response.getInstance();
-            res.setData(sanPhamList);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Lấy danh sách sản phẩm thành công!");
+            List sanPhamList = sanPhamService.getAllSanPham();
 
-            return res;
-            // return new ApiResponse(true, sanPhamList, "Lấy danh sách sản phẩm thành công!");
+            return responseHandler.generateResponse("Get All Product Successfully", HttpStatus.OK, Ultil.ListToPage(sanPhamList, page, size));
+
         }catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage(e.getMessage());
+            return responseHandler.generateResponse("Get All Product fail (SanPhamController.java) "+e.getMessage(), HttpStatus.BAD_REQUEST, null);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
     }
 
-    @PostMapping()
-    public Response createSanPham(@Valid @RequestBody SanPham sanPham) {
-        try {
+//    @GetMapping()
+//    public ResponseEntity<Object> getAllSanPham(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        try {
+//            List<SanPham> listProduct;
+//            Pageable paging = PageRequest.of(page, size);
+//
+//            Page<SanPham> pageTuts = sanPhamService.allSanPhamPaging(paging);
+//            listProduct = pageTuts.getContent();
+//
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("listProduct", listProduct);
+//            response.put("currentPage", pageTuts.getNumber());
+//            response.put("totalItems", pageTuts.getTotalElements());
+//            response.put("totalPages", pageTuts.getTotalPages());
+//
+//            return responseHandler.generateResponse("get all product successfully!", HttpStatus.OK, response);
+//        } catch (Exception e) {
+//            return responseHandler.generateResponse("get all product fail !", HttpStatus.BAD_REQUEST, null);
+//        }
+//    }
 
+    @PostMapping()
+    public ResponseEntity<Object> createSanPham(
+            @RequestBody Map<String,Object> req
+    ) {
+        try {
             // Khi muốn tạo một object ta chỉ cần khai báo như sau
             SanPham product = SanPham.newSanPham()
-                    .id(sanPham.getId())
-                    .ngaySanXuat(sanPham.getNgaySanXuat())
-                    .thang(sanPham.getThang())
-                    .tenSanPham(sanPham.getTenSanPham())
+                    .ngaySanXuat(Ultil.convertStringToSqlDate((String) req.get("ngaySanXuat")))
+                    .thang((Integer) req.get("hsd"))
+                    .tenSanPham((String) req.get("tenSanPham"))
                     .build();
             // nhìn vào có thể thấy code khá dễ hiểu trong việc mô tả các trường trong trường hợp cần nhiều biến cần truyền vào
 
             SanPham sanPhamCreate = sanPhamService.createSanPham(product);
-            Response res = Response.getInstance();
-            res.setData(sanPhamCreate);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Tạo sản phẩm thành công!");
 
-            return res;
-            // return new ApiResponse(true, sanPhamCreate, "Tạo sản phẩm thành công!");
+
+            //tạo giá sp
+            Gia gia = new Gia();
+            gia.setGia((Integer) req.get("gia"));
+            gia.setNgayBatDau(Ultil.convertStringToSqlDate((String) req.get("start")));
+            gia.setNgayKetThuc(Ultil.convertStringToSqlDate((String) req.get("end")));
+            Gia giaCreat = giaService.createGia(gia);
+
+            //tạo giá sp
+            GiaSanPham giaSanPham = new GiaSanPham();
+            giaSanPham.setSanPham(sanPhamCreate);
+            giaSanPham.setGia(giaCreat);
+            GiaSanPham giaSanPham1= giaSanPhamService.createGiaSp(giaSanPham);
+
+
+
+            return responseHandler.generateResponse("create product successfully", HttpStatus.OK, sanPhamCreate);
+
 
         }catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage(e.getMessage());
+            return responseHandler.generateResponse("create product fail (SanPhamController)"+e.getMessage(), HttpStatus.OK, null);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
     }
 
