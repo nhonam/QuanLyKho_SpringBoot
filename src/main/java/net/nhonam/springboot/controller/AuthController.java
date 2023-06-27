@@ -10,7 +10,6 @@ import net.nhonam.springboot.config.JwtTokenUtil;
 import net.nhonam.springboot.response.JwtRequest;
 import net.nhonam.springboot.response.Response;
 import net.nhonam.springboot.response.ResponseSingleton;
-import net.nhonam.springboot.service.CloudinaryService;
 import net.nhonam.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -90,21 +89,21 @@ public class AuthController {
 
 
     }
-    @Autowired
-    private CloudinaryService cloudinaryGifService;
+//    @Autowired
+//    private CloudinaryService cloudinaryGifService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadGif(@RequestParam("image")
-                                                                   MultipartFile gifFile) throws IOException {
-        // User currentUser =
-// userService.findUserByEmail(authentication.getName()); // Authorization
-        String url = cloudinaryGifService.uploadFile(gifFile);
-//        cloudinaryGifService.saveGifToDB(url, title , currentUser);
-
-
-        // LinkedHashMap<String, Object> jsonResponse = cloudinaryGifService.modifyJsonResponse("create", URL);
-        return new ResponseEntity<>(url,HttpStatus.CREATED);
-    }
+//    @PostMapping("/upload")
+//    public ResponseEntity<String> uploadGif(@RequestParam("image")
+//                                                                   MultipartFile gifFile) throws IOException {
+//        // User currentUser =
+//// userService.findUserByEmail(authentication.getName()); // Authorization
+//        String url = cloudinaryGifService.uploadFile(gifFile);
+////        cloudinaryGifService.saveGifToDB(url, title , currentUser);
+//
+//
+//        // LinkedHashMap<String, Object> jsonResponse = cloudinaryGifService.modifyJsonResponse("create", URL);
+//        return new ResponseEntity<>(url,HttpStatus.CREATED);
+//    }
 
 
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
