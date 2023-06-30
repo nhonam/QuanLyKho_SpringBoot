@@ -26,10 +26,10 @@ public class ConfigCors implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/")
-                .allowedOrigins("*")
+        registry.addMapping("/**")
+                .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE","HEAD","OPTIONS")
-                .allowCredentials(true);
+                .allowCredentials(true).allowedOrigins("*");
     }
 
 
