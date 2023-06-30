@@ -12,7 +12,7 @@ import java.util.Collection;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArggisConstructor
+@AllArgsConstructor
 public class ChiTietKho {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

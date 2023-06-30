@@ -3,8 +3,10 @@ package net.nhonam.springboot.controller;
 import net.nhonam.springboot.Entity.Kho;
 import net.nhonam.springboot.Utils.Ultil;
 import net.nhonam.springboot.response.ResponseSingleton;
+import net.nhonam.springboot.service.FilesStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.response.ApiResponse;
 import net.nhonam.springboot.service.UserService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +30,9 @@ import java.util.Map;
 @RequestMapping("/api/v1/user")
 public class UserController {
     ResponseSingleton responseHandler = ResponseSingleton.getInstance();
+
+    @Autowired
+    FilesStorageService storageService;
 
     @Autowired
     private UserService userService;
@@ -52,9 +59,6 @@ public class UserController {
             @RequestBody Map<String,Object> body
     ){
         try {
-            System.out.println(body.get("email"));
-            System.out.println(body.get("name"));
-            System.out.println(body.get("sdt"));
             if (body.get("email") == null)
                 body.put("email","");
             if (body.get("name") == null)
@@ -84,7 +88,9 @@ public class UserController {
     @PostMapping
     public ApiResponse createEmployee(@RequestBody User user) {
         try {
+            user.setStatus(true);
             User users = userService.createUser(user);
+
             return new ApiResponse(true, users, "Tạo nhân viên thành công!");
         } catch (Exception e) {
             return new ApiResponse(false, null, e.getMessage());
@@ -109,6 +115,7 @@ public class UserController {
     public ApiResponse updateEmployee(@PathVariable long id,@RequestBody User userDetail) {
 
         try {
+
             User updateUser = userService.getUserById(id);
             if(updateUser==null) {
                 return new ApiResponse(false, null, "Nhân viên không tồn tại");
@@ -137,6 +144,7 @@ public class UserController {
                 if (userDetail.getSDT() != null) {
                     updateUser.setSDT(userDetail.getSDT());
                 }
+                updateUser.setStatus(true);
                 userService.updateUser(id, updateUser);
             return new ApiResponse(true, updateUser, "Cập nhật thông tin thành công");
     
@@ -148,6 +156,38 @@ public class UserController {
 
     }
 
+    @PatchMapping("/avatar")
+    public ApiResponse updateAvatar(@RequestParam("id") long id,
+                                    @RequestParam("file") MultipartFile file) throws IOException {
+
+
+        User user = userService.getUserById((long)id);
+        System.out.println(id);
+        if(user==null) {
+            return new ApiResponse(false, null, "Nhân viên không tồn tại");
+        }
+
+
+
+        if(file!=null) {
+            if (user.getImage_url()!=null){
+                storageService.deleteFile(user.getImage_url());
+
+            }
+            storageService.save(file);
+            Resource resource= storageService.load(file.getOriginalFilename());
+            String url_image = resource.getURL().toString().substring(6);
+            user.setImage_url(url_image);
+        }
+
+//        user.setStatus(false);
+        userService.updateUser(id, user);
+
+
+        return new ApiResponse(true, user , "Cập nhật avatar thành coong");
+
+    }
+
     // build delete employee REST API
     @DeleteMapping("/{id}")
     public ApiResponse deleteEmployee(@PathVariable long id){
@@ -155,10 +195,10 @@ public class UserController {
         User user = userService.getUserById(id);
         if(user==null) {
             return new ApiResponse(false, null, "Nhân viên không tồn tại");
-        }   
+        }
 
-
-        userService.deleteUser(id);
+        user.setStatus(false);
+        userService.updateUser(id, user);
 
 
         return new ApiResponse(true, user , "Xóa nhân viên thành công");

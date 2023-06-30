@@ -1,6 +1,7 @@
 package net.nhonam.springboot.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,10 +21,12 @@ public class PhieuXuatDetail {
     private int soLuong;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "id_PhieuXuatKho") // // thông qua khóa ngoại id
     private PhieuXuatKho phieuXuatKho;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "id_SanPham") // // thông qua khóa ngoại id
     private SanPham sanPham;
 

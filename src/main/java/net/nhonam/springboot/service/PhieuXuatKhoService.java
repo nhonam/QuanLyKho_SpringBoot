@@ -2,6 +2,8 @@ package net.nhonam.springboot.service;
 
 import java.util.List;
 
+import net.nhonam.springboot.DTO.PhieuXuatDTO;
+import net.nhonam.springboot.DTO.PhieuXuatDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,18 @@ public class PhieuXuatKhoService {
 
     public List<PhieuXuatKho> getAllPXKho(){
         return  PXKhorepo.findAll();
+    }
+
+    public List<PhieuXuatDTO> getAllPhieuXuatByAdmin(){
+        return PXKhorepo.getAllPhieuXuatByAdmin();
+    }
+
+    public List<PhieuXuatDTO> getAllPhieuXuatByIdUser(long id){
+        return PXKhorepo.getAllPhieuXuatByIdUser(id);
+    }
+
+    public List<PhieuXuatDetailDTO> getPhieuXuatDetailById(long id){
+        return PXKhorepo.PhieuXuatDetailById(id);
     }
 
     public PhieuXuatKho getPXKhoById(Long id) {
