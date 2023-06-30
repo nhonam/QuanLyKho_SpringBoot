@@ -1,8 +1,5 @@
 package net.nhonam.springboot.controller;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.Transformation;
-import com.cloudinary.utils.ObjectUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import net.nhonam.springboot.Entity.User;
 import net.nhonam.springboot.Utils.RoleEnum;
@@ -20,13 +17,9 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @RestController()
 @CrossOrigin

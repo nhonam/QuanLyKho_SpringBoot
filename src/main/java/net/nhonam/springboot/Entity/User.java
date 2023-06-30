@@ -34,6 +34,9 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "image_url")
+    private String image_url;
+
     @Column(name = "email", unique = true)
     private String email;
 

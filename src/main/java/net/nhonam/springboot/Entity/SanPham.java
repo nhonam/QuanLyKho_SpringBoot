@@ -30,6 +30,13 @@ public class SanPham {
     @Column(name = "HanSuDung")
     private int thang;
 
+    @Column(name = "Status")
+    private Boolean status;
+
+    @Column(name = "image_url")
+    private String image_url;
+
+
     @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Collection<ViTriSP> viTriSPs;
@@ -51,6 +58,7 @@ public class SanPham {
         setTenSanPham(builder.tenSanPham);
         setNgaySanXuat(builder.ngaySanXuat);
         setThang(builder.thang);
+        setImage_url(builder.url_image);
     }
 
     public static BuilderPT newSanPham() {
@@ -68,7 +76,14 @@ public class SanPham {
 
         private int thang;
 
+        private String url_image;
+
         private BuilderPT() {
+        }
+
+        public BuilderPT url_image(String url) {
+            this.url_image = url;
+            return this;
         }
 
         public BuilderPT id(long id) {

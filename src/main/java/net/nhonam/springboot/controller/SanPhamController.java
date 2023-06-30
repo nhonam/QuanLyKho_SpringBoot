@@ -7,19 +7,20 @@ import net.nhonam.springboot.Entity.SanPham;
 import net.nhonam.springboot.Utils.Ultil;
 import net.nhonam.springboot.response.Response;
 import net.nhonam.springboot.response.ResponseSingleton;
+import net.nhonam.springboot.service.FilesStorageService;
 import net.nhonam.springboot.service.GiaSanPhamService;
 import net.nhonam.springboot.service.GiaService;
 import net.nhonam.springboot.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-
-import javax.validation.Valid;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -32,11 +33,15 @@ public class SanPhamController {
     private GiaSanPhamService giaSanPhamService;
     @Autowired
     private GiaService giaService;
+
+    @Autowired
+    FilesStorageService storageService;
     @GetMapping()
     public ResponseEntity<Object> getAllSanPham(  @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size) {
         try {
             List sanPhamList = sanPhamService.getAllSanPham();
+
 
             return responseHandler.generateResponse("Get All Product Successfully", HttpStatus.OK, Ultil.ListToPage(sanPhamList, page, size));
 
@@ -70,27 +75,49 @@ public class SanPhamController {
 //        }
 //    }
 
+//     "tenSanPham":"nhog nfam ne",
+//             "ngaySanXuat":"2001-03-30",
+//             "hsd":333,
+//             "gia":33332,
+//             "start":"2023-02-02",
+//             "end":"2022-02-01"
     @PostMapping()
     public ResponseEntity<Object> createSanPham(
-            @RequestBody Map<String,Object> req
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("tenSanPham") String tenSanPham,
+            @RequestParam("ngaySanXuat") Date ngaySanXuat,
+            @RequestParam("start") Date start,
+            @RequestParam("end") Date end,
+            @RequestParam("hsd") int hsd,
+            @RequestParam("gia") int price
     ) {
         try {
+            storageService.save(file);
+            Resource resource= storageService.load(file.getOriginalFilename());
+            String url_image = resource.getURL().toString().substring(6);
             // Khi muốn tạo một object ta chỉ cần khai báo như sau
             SanPham product = SanPham.newSanPham()
-                    .ngaySanXuat(Ultil.convertStringToSqlDate((String) req.get("ngaySanXuat")))
-                    .thang((Integer) req.get("hsd"))
-                    .tenSanPham((String) req.get("tenSanPham"))
+                    .ngaySanXuat(ngaySanXuat)
+                    .thang(hsd)
+                    .tenSanPham(tenSanPham)
+                    .url_image(url_image)
                     .build();
             // nhìn vào có thể thấy code khá dễ hiểu trong việc mô tả các trường trong trường hợp cần nhiều biến cần truyền vào
 
+            if (sanPhamService.CheckSpExsit(product.getTenSanPham())) {
+                return responseHandler.generateResponse("product is exsit (SanPhamController)", HttpStatus.BAD_REQUEST, null);
+
+            }
+
+            product.setStatus(true);
             SanPham sanPhamCreate = sanPhamService.createSanPham(product);
 
 
             //tạo giá sp
             Gia gia = new Gia();
-            gia.setGia((Integer) req.get("gia"));
-            gia.setNgayBatDau(Ultil.convertStringToSqlDate((String) req.get("start")));
-            gia.setNgayKetThuc(Ultil.convertStringToSqlDate((String) req.get("end")));
+            gia.setGia(price);
+            gia.setNgayBatDau(start);
+            gia.setNgayKetThuc(end);
             Gia giaCreat = giaService.createGia(gia);
 
             //tạo giá sp
@@ -111,77 +138,85 @@ public class SanPhamController {
     }
 
     @GetMapping("/{id}")
-    public Response getSanPhamById(@PathVariable  long id){
+    public ResponseEntity<Object> getSanPhamById(@PathVariable  long id){
 
         try {
-            SanPham sanPham = sanPhamService.getSanPhamById(id);
-            Response res = Response.getInstance();
-            res.setData(sanPham);
-            res.setStatus(HttpStatus.OK);
-            res.setMessage("Tìm kiếm thành công sản phẩm : "+id);
+            SanPhamDTO sanPham = sanPhamService.getSanPhamDTOById(id);
+            if (sanPham==null) {
+                return responseHandler.generateResponse("get product fail", HttpStatus.BAD_REQUEST, null);
 
-            return res;
-            // return new ApiResponse(true, sanPham, "Tìm kiếm thành công sản phẩm : "+id);
+            }
+            return responseHandler.generateResponse("get product successfully", HttpStatus.OK, sanPham);
+
         } catch (Exception e) {
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage(e.getMessage());
+            return responseHandler.generateResponse("get product fail", HttpStatus.BAD_REQUEST, null);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
 
     }
 
+
     @PatchMapping("/{id}")
-    public Response updateSanPham(@PathVariable long id,@RequestBody SanPham SanPham) {
+    public ResponseEntity<Object> updateSanPham(@PathVariable long id
+                                                ,@RequestParam("file") MultipartFile file,
+                                                @RequestParam("tenSanPham") String tenSanPham,
+                                                @RequestParam("ngaySanXuat") Date ngaySanXuat,
+                                                @RequestParam(value = "hsd", defaultValue = "0")  int hsd ,
+                                                @RequestParam("gia") int price  ) {
 
+        SanPham updateSanPham = sanPhamService.getSanPhamById(id);
+//        System.out.println(tenSanPham);
+//        System.out.println(ngaySanXuat);
+//        System.out.println(hsd);
+//        System.out.println(price);
+//        System.out.println(file.getOriginalFilename());
         try {
-            SanPham updateSanPham = sanPhamService.getSanPhamById(id);
+
+
+
             if(updateSanPham==null) {
-                Response res = Response.getInstance();
-                res.setData(null);
-                res.setStatus(HttpStatus.BAD_REQUEST);
-                res.setMessage("Sản phẩm không tồn tại");
-
-                return res;
-                // return new ApiResponse(false, null, "Sản phẩm không tồn tại");
+                return responseHandler.generateResponse("Product not found", HttpStatus.OK, null);
             }else {
-                if (SanPham.getTenSanPham() != null) {
-                    updateSanPham.setTenSanPham(SanPham.getTenSanPham());
+
+                if (tenSanPham != null) {
+                    updateSanPham.setTenSanPham(tenSanPham);
+//                    if (sanPhamService.CheckSpExsit(tenSanPham)) {
+//                        return responseHandler.generateResponse("product is exsit (SanPhamController)", HttpStatus.BAD_REQUEST, null);
+//
+//                    }
+                }
+                if (ngaySanXuat !=null) {
+                    updateSanPham.setNgaySanXuat(ngaySanXuat);
+                }
+                if (hsd !=0 ) {
+                    updateSanPham.setThang(hsd);
+                }
+                if(file!=null) {
+                    storageService.deleteFile(updateSanPham.getImage_url());
+                    storageService.save(file);
+                    Resource resource= storageService.load(file.getOriginalFilename());
+                    String url_image = resource.getURL().toString().substring(6);
+                    updateSanPham.setImage_url(url_image);
                 }
 
 
-                if (SanPham.getNgaySanXuat() != null) {
-                    updateSanPham.setNgaySanXuat(SanPham.getNgaySanXuat());
+                sanPhamService.updateSanPham( updateSanPham);
+
+                if (price !=0) {
+                    Object a = sanPhamService.getIdSPandGia(id, price);
                 }
 
 
-                if (SanPham.getThang() != 0) {
-                    updateSanPham.setThang(SanPham.getThang());
-                }
 
 
-                sanPhamService.updateSanPham(id, updateSanPham);
-                Response res = Response.getInstance();
-                res.setData(updateSanPham);
-                res.setStatus(HttpStatus.OK);
-                res.setMessage("Cập nhật thông tin thành công");
+                return responseHandler.generateResponse("Update Product successfully", HttpStatus.OK, updateSanPham);
 
-                return res;
-                // return new ApiResponse(true, updateSanPham, "Cập nhật thông tin thành công");
 
             }
         } catch (Exception e) {
-            // TODO: handle exception
-            Response res = Response.getInstance();
-            res.setData(null);
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.setMessage(e.getMessage());
+            return responseHandler.generateResponse("Update Product successfully"+e.getMessage(), HttpStatus.OK
+                    , updateSanPham);
 
-            return res;
-            // return new ApiResponse(false, null, e.getMessage());
         }
 
 
@@ -189,8 +224,8 @@ public class SanPhamController {
     }
 
     // build delete employee REST API
-    @DeleteMapping("/{id}")
-    public Response deleteSanPham(@PathVariable long id){
+    @DeleteMapping ("/{id}")
+    public Response deleteSanPham(@PathVariable long id) throws IOException {
 
         SanPham sanPham = sanPhamService.getSanPhamById(id);
         if(sanPham==null) {
@@ -203,8 +238,10 @@ public class SanPhamController {
             // return new ApiResponse(false, null, "Sản phẩm không tồn tại");
         }
 
+        storageService.deleteFile(sanPham.getImage_url());
 
-        sanPhamService.deleteSanPham(id);
+        sanPham.setStatus(false);
+        sanPhamService.updateSanPham(sanPham);
 
         Response res = Response.getInstance();
         res.setData(sanPham);

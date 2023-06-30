@@ -2,6 +2,9 @@ package net.nhonam.springboot.service;
 
 import java.util.List;
 
+import net.nhonam.springboot.DTO.PhieuNhapDTO;
+import net.nhonam.springboot.DTO.PhieuNhapDetailDTO;
+import net.nhonam.springboot.Entity.PhieuNhapDetail;
 import net.nhonam.springboot.Entity.SanPham;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +18,19 @@ import net.nhonam.springboot.repository.PhieuNhapKhoRepository;
 public class PhieuNhapKhoService {
     @Autowired
     private PhieuNhapKhoRepository phieunhaprepo;
+
+    public List<PhieuNhapDTO> getAllPhieuNhapByAdmin(){
+        return  phieunhaprepo.getPhieuNhapByAdmin();
+    }
+
+    public List<PhieuNhapDTO> getPhieuNhapByEmployee(long id_user){
+        return  phieunhaprepo.getPhieuNhapByEmployee(id_user);
+    }
+
+    public List<PhieuNhapDetailDTO> getPhieuNhapDetail(long id){
+        return  phieunhaprepo.getPhieuNhapDetail(id);
+    }
+
 
     public List<PhieuNhapKho> getAllPNKho(){
         return  phieunhaprepo.findAll();

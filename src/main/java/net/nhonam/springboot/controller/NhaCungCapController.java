@@ -121,7 +121,7 @@ public class NhaCungCapController {
 
 
                 NhacungcapService.updateNhaCC(id, updateNhaCC);
-                return responseHandler.generateResponse("updata Supplier successfully", HttpStatus.OK, null);
+                return responseHandler.generateResponse("updata Supplier successfully", HttpStatus.OK, updateNhaCC);
 
 
             }

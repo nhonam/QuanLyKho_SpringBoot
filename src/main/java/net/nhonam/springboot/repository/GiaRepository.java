@@ -5,9 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import net.nhonam.springboot.Entity.Gia;
 
+import java.util.List;
+
 @Repository
 public interface GiaRepository extends JpaRepository<Gia, Long>{
 
 
-    
 }

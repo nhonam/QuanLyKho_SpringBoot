@@ -15,4 +15,6 @@ public interface SanPhamDTO {
     long getGia();
     Date getngay_bat_dau();
     Date getngay_ket_thuc();
+
+    String getimage_url();
 }

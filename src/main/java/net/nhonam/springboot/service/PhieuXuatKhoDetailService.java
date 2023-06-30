@@ -12,20 +12,20 @@ public class PhieuXuatKhoDetailService {
     @Autowired
     private PhieuXuatKhoDetailRepository pxdetailrepo;
 
-    public List<PhieuXuatDetail> getAllPNKho(){
+    public List<PhieuXuatDetail> getAllPhieuXuatDetail(){
         return  pxdetailrepo.findAll();
     }
 
-    public PhieuXuatDetail getPNKhoById(Long id) {
+    public PhieuXuatDetail getPhieuXuatDetailKhoById(Long id) {
         return pxdetailrepo.findById(id).orElse(null);
     }
-    public PhieuXuatDetail createPNKho(PhieuXuatDetail pxdetail) {
+    public PhieuXuatDetail createPhieuXuatDetail(PhieuXuatDetail pxdetail) {
         return pxdetailrepo.save(pxdetail);
     }
-    public PhieuXuatDetail updatePNKho(Long id, PhieuXuatDetail pxdetail) {
+    public PhieuXuatDetail updatePhieuXuatDetail(Long id, PhieuXuatDetail pxdetail) {
         return pxdetailrepo.save(pxdetail);
     }
-    public void deletePNKho(Long id) {
+    public void deletePhieuXuatDetail(Long id) {
         pxdetailrepo.deleteById(id);
     }
 }
