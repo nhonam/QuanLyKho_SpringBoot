@@ -20,6 +20,9 @@ public class NhaCungCapService {
     public List<NhaCungCap> getAllNhaCungCap(){
         return  NhaCungCaprepo.findAll();
     }
+    public List<NhaCungCap> search_ByName(String name){
+        return  NhaCungCaprepo.search_NhaCungCapbyName(name);
+    }
 
     public Page<NhaCungCap> allNhaCungCapPage(Pageable paging){
         return NhaCungCaprepo.findAll(paging);

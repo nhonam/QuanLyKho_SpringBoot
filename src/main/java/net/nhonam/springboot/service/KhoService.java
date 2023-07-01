@@ -20,6 +20,10 @@ public class KhoService {
         return  Khorepo.findAll();
     }
 
+    public List<Kho> search_Product_ByName(String name){
+        return  Khorepo.search_Product_ByName(name);
+    }
+
     public Kho getKhoById(Long id) {
         return Khorepo.findById(id).orElse(null);
     }
