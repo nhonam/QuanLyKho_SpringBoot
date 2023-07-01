@@ -51,6 +51,21 @@ public class SanPhamController {
         }
     }
 
+    @GetMapping("/search/{name}")
+    public ResponseEntity<Object> searchSPbyName(
+                                                  @PathVariable("name") String size) {
+        try {
+            List<SanPham> sanPhamList = sanPhamService.searchSPbyName(size);
+
+
+            return responseHandler.generateResponse("searchSPbyName Successfully", HttpStatus.OK, sanPhamList);
+
+        }catch (Exception e) {
+            return responseHandler.generateResponse("searchSPbyName fail (SanPhamController.java) "+e.getMessage(), HttpStatus.BAD_REQUEST, null);
+
+        }
+    }
+
 //    @GetMapping()
 //    public ResponseEntity<Object> getAllSanPham(
 //            @RequestParam(defaultValue = "0") int page,
@@ -94,6 +109,10 @@ public class SanPhamController {
         try {
             storageService.save(file);
             Resource resource= storageService.load(file.getOriginalFilename());
+
+            System.out.println(resource.getURL());
+            System.out.println(resource.getURI());
+
             String url_image = resource.getURL().toString().substring(6);
             // Khi muốn tạo một object ta chỉ cần khai báo như sau
             SanPham product = SanPham.newSanPham()

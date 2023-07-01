@@ -27,6 +27,6 @@ public interface ISanPhamRepo extends JpaRepository<SanPham, Long> {
     @Query(value = "CALL getProductById(:id_sanpham);", nativeQuery = true)
     SanPhamDTO getProductById(@Param("id_sanpham") long id_sanpham); // idsanpham , idgia , idgiasanpham
 
-//    @Procedure(name = "get_All_Product()")
-//    List<SanPhamDTO> getAllProduct();
+    @Query(value = "CALL search_Product_ByName(:name);", nativeQuery = true)
+    List<SanPham> searchSanPhamByName(@Param("name") String name);
 }

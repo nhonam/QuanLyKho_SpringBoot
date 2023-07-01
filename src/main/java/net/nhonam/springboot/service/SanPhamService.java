@@ -15,6 +15,12 @@ public class SanPhamService {
     @Autowired
     private ISanPhamRepo sanPhamRepo;
 
+
+    public List<SanPham> searchSPbyName(String name){
+        return  sanPhamRepo.searchSanPhamByName(name);
+    }
+
+
     public List<SanPham> getAllSanPhamtontai(){
         return  sanPhamRepo.findAll();
     }
@@ -22,7 +28,9 @@ public class SanPhamService {
         public List<SanPhamDTO>  getAllSanPham(){
         return  sanPhamRepo.getAllProduct();
     }
-    
+
+
+
     public Boolean CheckSpExsit(String name) {
             
             List<SanPhamDTO> list = getAllSanPham();

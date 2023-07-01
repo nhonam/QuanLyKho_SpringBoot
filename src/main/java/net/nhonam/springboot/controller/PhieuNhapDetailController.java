@@ -2,7 +2,9 @@ package net.nhonam.springboot.controller;
 
 import java.util.List;
 
+import net.nhonam.springboot.Utils.TotalPriceStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +38,17 @@ public class PhieuNhapDetailController {
             return new ApiResponse(false, null, e.getMessage());
         }
     }
+    private final TotalPriceStrategy totalquantity;
+    public PhieuNhapDetailController(TotalPriceStrategy totalquantity) {
+        this.totalquantity = totalquantity;
+    }
+    @GetMapping("/total")
+    public ResponseEntity<?> getTotalQuantity() {
+        List<PhieuNhapDetail> products =  PNKhoDetailService.getAllphieunhapDetail();
+        int totalproduct = totalquantity.calculateTotalPrice(products);
+        return ResponseEntity.ok(totalproduct);
+    }
+
     @PostMapping()
     public ApiResponse createPNKhoDetail(@Valid @RequestBody PhieuNhapDetail PNKhoDetail) {
         try {
