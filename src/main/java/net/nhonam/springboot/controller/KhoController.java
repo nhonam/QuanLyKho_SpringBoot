@@ -75,6 +75,25 @@ public class KhoController {
 
         }
     }
+
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<Object>  searchKhoByName(@PathVariable("name") String nameWarehouse) {
+        ResponseSingleton responseHandler = ResponseSingleton.getInstance();
+
+        try {
+            List<Kho> kho = khoService.search_Product_ByName(nameWarehouse);
+            if(kho != null){
+                return responseHandler.generateResponse("search_Product_ByName Successfully", HttpStatus.OK, kho);
+            }
+            else{
+                return responseHandler.generateResponse("search_Product_ByName not exist", HttpStatus.OK, kho);
+            }
+        } catch (Exception e) {
+            return responseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+
+        }
+    }
     @PostMapping()
     public  ResponseEntity<Object> createKho( @RequestBody Kho kho) {
         ResponseSingleton responseHandler = ResponseSingleton.getInstance();

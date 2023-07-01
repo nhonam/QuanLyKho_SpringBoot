@@ -81,6 +81,27 @@ public class NhaCungCapController {
 
         }
     }
+
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<Object> searchNhaCungCap(@PathVariable String name){
+
+        try {
+            List<NhaCungCap> nhacungcap = NhacungcapService.search_ByName(name);
+            if (nhacungcap==null) {
+                return responseHandler.generateResponse(" searchNhaCungCap not found!", HttpStatus.OK, null);
+
+            }
+            return responseHandler.generateResponse("searchNhaCungCap successfully!", HttpStatus.OK, nhacungcap);
+
+            // return new ApiResponse(true, nhacungcap, "Tìm kiếm nha cung cap thanh cong: "+id);
+        } catch (Exception e) {
+            return responseHandler.generateResponse(" searchNhaCungCap not found!", HttpStatus.BAD_REQUEST, null);
+
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteNhaCCById(@PathVariable long id){
 
